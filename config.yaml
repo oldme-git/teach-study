@@ -1,0 +1,5 @@
+redis:
+  default:
+    address: "192.168.10.47:6379"
+    db: 0
+    pass: "secret"
