@@ -67,6 +67,7 @@ var (
 )
 
 // WithDB injects given db object into context and returns a new context.
+// 给一个DB注入新的上下文
 func WithDB(ctx context.Context, db DB) context.Context {
 	if db == nil {
 		return ctx

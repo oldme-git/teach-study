@@ -35,6 +35,8 @@ func (c *Core) GetCore() *Core {
 // of current DB object and with given context in it.
 // Note that this returned DB object can be used only once, so do not assign it to
 // a global or package variable for long using.
+// 在db中注入ctx
+// TODO 注释是浅拷贝，但是打印出来的内存地址是不同的
 func (c *Core) Ctx(ctx context.Context) DB {
 	if ctx == nil {
 		return c.db

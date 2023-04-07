@@ -5,8 +5,6 @@ github.com/BurntSushi/toml/internal
 # github.com/clbanning/mxj/v2 v2.5.5
 ## explicit; go 1.15
 github.com/clbanning/mxj/v2
-# github.com/davecgh/go-spew v1.1.1
-## explicit
 # github.com/fatih/color v1.13.0
 ## explicit; go 1.13
 github.com/fatih/color
@@ -23,6 +21,9 @@ github.com/go-logr/stdr
 # github.com/go-sql-driver/mysql v1.7.0
 ## explicit; go 1.13
 github.com/go-sql-driver/mysql
+# github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.3
+## explicit; go 1.15
+github.com/gogf/gf/contrib/drivers/mysql/v2
 # github.com/gogf/gf/v2 v2.3.3
 ## explicit; go 1.15
 github.com/gogf/gf/v2

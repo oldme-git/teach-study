@@ -28,6 +28,7 @@ import (
 )
 
 // DB defines the interfaces for ORM operations.
+// DB 接口
 type DB interface {
 	// ===========================================================================
 	// Model creation.
@@ -244,6 +245,7 @@ type TX interface {
 
 // Core is the base struct for database management.
 type Core struct {
+	// 保存着当前DB
 	db            DB              // DB interface object.
 	ctx           context.Context // Context for chaining operation only. Do not set a default value in Core initialization.
 	group         string          // Configuration group name.
@@ -284,6 +286,7 @@ type DoCommitOutput struct {
 }
 
 // Driver is the interface for integrating sql drivers into package gdb.
+// 定义一个驱动实现的接口，即必须实现New方法
 type Driver interface {
 	// New creates and returns a database object for specified database server.
 	New(core *Core, node *ConfigNode) (DB, error)
@@ -358,7 +361,9 @@ type queryType int
 
 const (
 	defaultModelSafe                      = false
+	// 数据库默认编码
 	defaultCharset                        = `utf8`
+	// 默认连接协议
 	defaultProtocol                       = `tcp`
 	queryTypeNormal           queryType   = 0
 	queryTypeCount            queryType   = 1
@@ -458,12 +463,14 @@ func init() {
 }
 
 // Register registers custom database driver to gdb.
+// 注册一个数据库驱动
 func Register(name string, driver Driver) error {
 	driverMap[name] = newDriverWrapper(driver)
 	return nil
 }
 
 // New creates and returns an ORM object with given configuration node.
+// 根据node创建一个数据库节点
 func New(node ConfigNode) (db DB, err error) {
 	return newDBByConfigNode(&node, "")
 }
@@ -504,29 +511,38 @@ func NewByGroup(group ...string) (db DB, err error) {
 // Very Note:
 // The parameter `node` is used for DB creation, not for underlying connection creation.
 // So all db type configurations in the same group should be the same.
+// 创建一个ORM节点，只是创建一个节点，并不涉及到底层数据库的连接
 func newDBByConfigNode(node *ConfigNode, group string) (db DB, err error) {
 	if node.Link != "" {
+		// 解析node.link为整个结构体-使用正则
 		node = parseConfigNodeLink(node)
 	}
 	c := &Core{
 		group:  group,
+		// TODO 为什么这样？
 		debug:  gtype.NewBool(),
 		cache:  gcache.New(),
+		// 并发安全的map[str]any
 		links:  gmap.NewStrAnyMap(true),
 		logger: glog.New(),
-		config: node,
+		config: node, // 载入node配置
 		dynamicConfig: dynamicConfig{
+			// 连接池最大闲置连接数
 			MaxIdleConnCount: node.MaxIdleConnCount,
+			// 连接池最大打开的连接数
 			MaxOpenConnCount: node.MaxOpenConnCount,
+			// 连接对象可重复使用的时间长度
 			MaxConnLifeTime:  node.MaxConnLifeTime,
 		},
 	}
 	if v, ok := driverMap[node.Type]; ok {
+		// 调用的是数据库驱动中的 driver结构体的New方法获取DB，然后装载到Core.db中
 		if c.db, err = v.New(c, node); err != nil {
 			return nil, err
 		}
 		return c.db, nil
 	}
+	// 找不到数据库驱动抛出err
 	errorMsg := `cannot find database driver for specified database type "%s"`
 	errorMsg += `, did you misspell type name "%s" or forget importing the database driver? `
 	errorMsg += `possible reference: https://github.com/gogf/gf/tree/master/contrib/drivers`

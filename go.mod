@@ -3,18 +3,18 @@ module gotest
 go 1.19
 
 require (
-	github.com/go-sql-driver/mysql v1.7.0
+	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.3
 	github.com/gogf/gf/v2 v2.3.3
 )
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/clbanning/mxj/v2 v2.5.5 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/grokify/html-strip-tags-go v0.0.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
