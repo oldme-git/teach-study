@@ -207,6 +207,7 @@ func (c *Core) SetMaxConnLifeTime(d time.Duration) {
 }
 
 // GetConfig returns the current used node configuration.
+// 返回当前db的配置
 func (c *Core) GetConfig() *ConfigNode {
 	internalData := c.GetInternalCtxDataFromCtx(c.db.GetCtx())
 	if internalData != nil && internalData.ConfigNode != nil {

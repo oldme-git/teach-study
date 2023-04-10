@@ -1,7 +1,6 @@
 package test2
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -16,6 +15,5 @@ func (ai *Aint) Table(a int) int {
 }
 
 func TestA(t *testing.T) {
-	a := new(Aint)
-	fmt.Println(*a)
+
 }

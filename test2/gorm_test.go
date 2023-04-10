@@ -3,6 +3,7 @@ package test2
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/os/gctx"
 
 	//_ "github.com/go-sql-driver/mysql"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
@@ -22,9 +23,8 @@ func TestNew(t *testing.T) {
 		panic(err)
 	}
 
-	fmt.Println(&db)
-	dbc := db.Ctx(nil)
-	fmt.Println(&dbc)
+	db = db.Ctx(gctx.New())
+	fmt.Println(db)
 
 	//data, _ := db.Ctx(ctx).Model("student").All()
 	//t.Log(data)
