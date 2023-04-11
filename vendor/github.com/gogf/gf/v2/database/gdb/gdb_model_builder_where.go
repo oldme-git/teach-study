@@ -15,6 +15,9 @@ import (
 // doWhereType sets the condition statement for the model. The parameter `where` can be type of
 // string/map/gmap/slice/struct/*struct, etc. Note that, if it's called more than one times,
 // multiple conditions will be joined into where statement using "AND".
+// whereType where类型：and or
+// where: 字段
+// args：值
 func (b *WhereBuilder) doWhereType(whereType string, where interface{}, args ...interface{}) *WhereBuilder {
 	where, args = b.convertWhereBuilder(where, args)
 

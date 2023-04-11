@@ -26,6 +26,7 @@ type WhereHolder struct {
 }
 
 // Builder creates and returns a WhereBuilder.
+// 编译where条件
 func (m *Model) Builder() *WhereBuilder {
 	b := &WhereBuilder{
 		model:       m,
