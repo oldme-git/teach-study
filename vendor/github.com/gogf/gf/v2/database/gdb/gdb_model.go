@@ -29,7 +29,7 @@ type Model struct {
 	withArray     []interface{} // Arguments for With feature.
 	withAll       bool          // Enable model association operations on all objects that have "with" tag in the struct.
 	extraArgs     []interface{} // Extra custom arguments for sql, which are prepended to the arguments before sql committed to underlying driver.
-	whereBuilder  *WhereBuilder // Condition builder for where operation.
+	whereBuilder  *WhereBuilder // 承载where条件的保存 Condition builder for where operation.
 	groupBy       string        // Used for "group by" statement.
 	orderBy       string        // Used for "order by" statement.
 	having        []interface{} // Used for "having..." statement.

@@ -26,6 +26,7 @@ import (
 // The optional parameter `where` is the same as the parameter of Model.Where function,
 // see Model.Where.
 func (m *Model) All(where ...interface{}) (Result, error) {
+	fmt.Println(*m.whereBuilder.model.whereBuilder)
 	var ctx = m.GetCtx()
 	return m.doGetAll(ctx, false, where...)
 }

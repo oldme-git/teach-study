@@ -20,7 +20,9 @@ func TestNew(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	data, _ := db.Ctx(ctx).Model("student").Where("stud_no", "20001").All()
-
-	t.Log(data)
+	db2 := db.Ctx(ctx).Model("student")
+	db2 = db2.Where("stud_no", "20001")
+	db2 = db2.Where("stud_no", "20002")
+	db2.All()
+	//fmt.Println(d)
 }

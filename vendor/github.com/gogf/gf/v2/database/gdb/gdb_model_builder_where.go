@@ -15,9 +15,18 @@ import (
 // doWhereType sets the condition statement for the model. The parameter `where` can be type of
 // string/map/gmap/slice/struct/*struct, etc. Note that, if it's called more than one times,
 // multiple conditions will be joined into where statement using "AND".
-// whereType where类型：and or
+// whereType where的类型
 // where: 字段
 // args：值
+
+// where的类型:
+// Where("uid=10000")
+// Where("uid", 10000)
+// Where("money>? AND name like ?", 99999, "vip_%")
+// Where("uid", 1).Where("name", "john")
+	// Where("status IN (?)", g.Slice{1,2,3})
+// Where("age IN(?,?)", 18, 50)
+// Where(User{ Id : 1, UserName : "john"}).
 func (b *WhereBuilder) doWhereType(whereType string, where interface{}, args ...interface{}) *WhereBuilder {
 	where, args = b.convertWhereBuilder(where, args)
 
@@ -25,8 +34,10 @@ func (b *WhereBuilder) doWhereType(whereType string, where interface{}, args ...
 	if builder.whereHolder == nil {
 		builder.whereHolder = make([]WhereHolder, 0)
 	}
+
 	if whereType == "" {
 		if len(args) == 0 {
+			// Where("uid=10000")类型
 			whereType = whereHolderTypeNoArgs
 		} else {
 			whereType = whereHolderTypeDefault

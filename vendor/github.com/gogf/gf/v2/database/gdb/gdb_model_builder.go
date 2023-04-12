@@ -11,6 +11,7 @@ import (
 )
 
 // WhereBuilder holds multiple where conditions in a group.
+// 在一个builder组保存一个where条件
 type WhereBuilder struct {
 	model       *Model        // A WhereBuilder should be bound to certain Model.
 	whereHolder []WhereHolder // Condition strings for where operation.
@@ -18,15 +19,15 @@ type WhereBuilder struct {
 
 // WhereHolder is the holder for where condition preparing.
 type WhereHolder struct {
-	Type     string        // Type of this holder.
-	Operator int           // Operator for this holder.
+	Type     string        // Type of this holder. 持有类型
+	Operator int           // Operator for this holder. 操作
 	Where    interface{}   // Where parameter, which can commonly be type of string/map/struct.
 	Args     []interface{} // Arguments for where parameter.
 	Prefix   string        // Field prefix, eg: "user.", "order.".
 }
 
 // Builder creates and returns a WhereBuilder.
-// 编译where条件
+// 获取一个WhereBuilder
 func (m *Model) Builder() *WhereBuilder {
 	b := &WhereBuilder{
 		model:       m,
@@ -37,13 +38,16 @@ func (m *Model) Builder() *WhereBuilder {
 
 // getBuilder creates and returns a cloned WhereBuilder of current WhereBuilder if `safe` is true,
 // or else it returns the current WhereBuilder.
+// 返回当前的wherebuilder克隆对象，如果是链式安全，非链式安全就返回当前wherebuild
 func (b *WhereBuilder) getBuilder() *WhereBuilder {
 	return b.Clone()
 }
 
 // Clone clones and returns a WhereBuilder that is a copy of current one.
+// 克隆一个wherebuilder
 func (b *WhereBuilder) Clone() *WhereBuilder {
 	newBuilder := b.model.Builder()
+	// 创建一个和原来whereholder一样长度的切片，并且拷贝一个值过去
 	newBuilder.whereHolder = make([]WhereHolder, len(b.whereHolder))
 	copy(newBuilder.whereHolder, b.whereHolder)
 	return newBuilder
@@ -115,6 +119,7 @@ func (b *WhereBuilder) convertWhereBuilder(where interface{}, args []interface{}
 	case *WhereBuilder:
 		builder = v
 	}
+	// TODO 什么样的情况下builder != nil ?
 	if builder != nil {
 		conditionWhere, conditionArgs := builder.Build()
 		if conditionWhere != "" && len(b.whereHolder) == 0 {
