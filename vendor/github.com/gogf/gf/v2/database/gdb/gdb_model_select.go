@@ -26,7 +26,6 @@ import (
 // The optional parameter `where` is the same as the parameter of Model.Where function,
 // see Model.Where.
 func (m *Model) All(where ...interface{}) (Result, error) {
-	fmt.Println(*m.whereBuilder.model.whereBuilder)
 	var ctx = m.GetCtx()
 	return m.doGetAll(ctx, false, where...)
 }
@@ -466,6 +465,7 @@ func (m *Model) Having(having interface{}, args ...interface{}) *Model {
 // see Model.Where.
 func (m *Model) doGetAll(ctx context.Context, limit1 bool, where ...interface{}) (Result, error) {
 	if len(where) > 0 {
+		// 如果All() 携带了 where 信息，则注入到model中
 		return m.Where(where[0], where[1:]...).All()
 	}
 	sqlWithHolder, holderArgs := m.getFormattedSqlAndArgs(ctx, queryTypeNormal, limit1)
@@ -498,9 +498,7 @@ func (m *Model) doGetAllBySql(ctx context.Context, queryType queryType, sql stri
 	return
 }
 
-func (m *Model) getFormattedSqlAndArgs(
-	ctx context.Context, queryType queryType, limit1 bool,
-) (sqlWithHolder string, holderArgs []interface{}) {
+func (m *Model) getFormattedSqlAndArgs(ctx context.Context, queryType queryType, limit1 bool) (sqlWithHolder string, holderArgs []interface{}) {
 	switch queryType {
 	case queryTypeCount:
 		queryFields := "COUNT(1)"
@@ -550,6 +548,7 @@ func (m *Model) getHolderAndArgsAsSubModel(ctx context.Context) (holder string, 
 	return
 }
 
+// JOIN 处理
 func (m *Model) getAutoPrefix() string {
 	autoPrefix := ""
 	if gstr.Contains(m.tables, " JOIN ") {
@@ -618,9 +617,9 @@ func (m *Model) getFieldsFiltered() string {
 // Note that this function does not change any attribute value of the `m`.
 //
 // The parameter `limit1` specifies whether limits querying only one record if m.limit is not set.
-func (m *Model) formatCondition(
-	ctx context.Context, limit1 bool, isCountStatement bool,
-) (conditionWhere string, conditionExtra string, conditionArgs []interface{}) {
+// limit1 是否只查询一条数据
+// isCountStatement 是否是聚合查询
+func (m *Model) formatCondition(ctx context.Context, limit1 bool, isCountStatement bool) (conditionWhere string, conditionExtra string, conditionArgs []interface{}) {
 	var autoPrefix = m.getAutoPrefix()
 	// GROUP BY.
 	if m.groupBy != "" {

@@ -39,7 +39,6 @@ func init() {
 		driverNames = g.SliceStr{"mysql", "mariadb", "tidb"}
 	)
 	for _, driverName := range driverNames {
-		// 注册数据库驱动
 		if err = gdb.Register(driverName, driverObj); err != nil {
 			panic(err)
 		}
@@ -53,9 +52,7 @@ func New() gdb.Driver {
 
 // New creates and returns a database object for mysql.
 // It implements the interface of gdb.Driver for extra database driver installation.
-// 真正的去注册一个驱动
 func (d *Driver) New(core *gdb.Core, node *gdb.ConfigNode) (gdb.DB, error) {
-	// Driver实现了DB interface是因为Core实现了DB很多方法，比如Model
 	return &Driver{
 		Core: core,
 	}, nil

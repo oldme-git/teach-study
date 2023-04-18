@@ -24,7 +24,7 @@ type StrAnyMap struct {
 
 // NewStrAnyMap returns an empty StrAnyMap object.
 // The parameter `safe` is used to specify whether using map in concurrent-safety,
-// which is false in default.1
+// which is false in default.
 func NewStrAnyMap(safe ...bool) *StrAnyMap {
 	return &StrAnyMap{
 		mu:   rwmutex.Create(safe...),

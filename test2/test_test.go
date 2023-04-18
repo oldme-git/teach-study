@@ -1,29 +1,16 @@
 package test2
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
 )
 
-type Nei struct {
-	s string
-}
-
-func (n Nei) NeiA() {
-	fmt.Println(n.s)
-}
-
-type Wai struct {
-	*Nei
-}
-
-func (w *Wai) WaiA() {
-	fmt.Println("waiA")
-}
-
 func TestA(t *testing.T) {
-	w := &Wai{
-		&Nei{s: "saaa"},
-	}
-	w.NeiA()
+	buf := bytes.NewBufferString("hello")
+	buf.WriteString(" oldme")
+	fmt.Println(buf.String())
+	b, _ := buf.ReadByte()
+	fmt.Println(b)
+	fmt.Println(buf.String())
 }

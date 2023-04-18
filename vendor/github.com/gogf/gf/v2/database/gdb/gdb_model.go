@@ -29,7 +29,7 @@ type Model struct {
 	withArray     []interface{} // Arguments for With feature.
 	withAll       bool          // Enable model association operations on all objects that have "with" tag in the struct.
 	extraArgs     []interface{} // Extra custom arguments for sql, which are prepended to the arguments before sql committed to underlying driver.
-	whereBuilder  *WhereBuilder // 承载where条件的保存 Condition builder for where operation.
+	whereBuilder  *WhereBuilder // Condition builder for where operation.
 	groupBy       string        // Used for "group by" statement.
 	orderBy       string        // Used for "order by" statement.
 	having        []interface{} // Used for "having..." statement.
@@ -80,7 +80,6 @@ const (
 //  2. Model name with alias:
 //     db.Model("user", "u")
 //  3. Model name with sub-query:
-// 子查询特性
 //     db.Model("? AS a, ? AS b", subQuery1, subQuery2)
 func (c *Core) Model(tableNameQueryOrStruct ...interface{}) *Model {
 	var (
@@ -90,14 +89,11 @@ func (c *Core) Model(tableNameQueryOrStruct ...interface{}) *Model {
 		extraArgs []interface{}
 	)
 	// Model creation with sub-query.
-	// 子查询特性实现
-	// TODO 具体需要研究实现的方法
 	if len(tableNameQueryOrStruct) > 1 {
 		conditionStr := gconv.String(tableNameQueryOrStruct[0])
 		if gstr.Contains(conditionStr, "?") {
 			whereHolder := WhereHolder{
 				Where: conditionStr,
-				// 将第二个的值都作为args
 				Args:  tableNameQueryOrStruct[1:],
 			}
 			tableStr, extraArgs = formatWhereHolder(ctx, c.db, formatWhereHolderInput{
@@ -114,15 +110,12 @@ func (c *Core) Model(tableNameQueryOrStruct ...interface{}) *Model {
 		tableNames := make([]string, len(tableNameQueryOrStruct))
 		for k, v := range tableNameQueryOrStruct {
 			if s, ok := v.(string); ok {
-				// 如果是字符串则直接赋予tablesNames
 				tableNames[k] = s
 			} else if tableName = getTableNameFromOrmTag(v); tableName != "" {
 				tableNames[k] = tableName
 			}
 		}
-		// 为表名加上前缀和分隔符
 		if len(tableNames) > 1 {
-			// 别名实现
 			tableStr = fmt.Sprintf(
 				`%s AS %s`, c.QuotePrefixTableName(tableNames[0]), c.QuoteWord(tableNames[1]),
 			)
@@ -130,22 +123,18 @@ func (c *Core) Model(tableNameQueryOrStruct ...interface{}) *Model {
 			tableStr = c.QuotePrefixTableName(tableNames[0])
 		}
 	}
-
 	m := &Model{
 		db:         c.db,
 		schema:     c.schema,
 		tablesInit: tableStr,
 		tables:     tableStr,
-		// 字段，默认所有
 		fields:     defaultFields,
 		start:      -1,
 		offset:     -1,
 		filter:     true,
-		// 子特性
 		extraArgs:  extraArgs,
 	}
 	m.whereBuilder = m.Builder()
-	// 默认情况下，链式不安全
 	if defaultModelSafe {
 		m.safe = true
 	}

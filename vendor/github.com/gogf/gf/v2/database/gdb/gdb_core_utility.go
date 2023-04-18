@@ -106,7 +106,6 @@ func (c *Core) QuoteString(s string) string {
 //
 // Note that, this will automatically checks the table prefix whether already added,
 // if true it does nothing to the table name, or else adds the prefix to the table name.
-// 为表明添加前缀和Chars
 func (c *Core) QuotePrefixTableName(table string) string {
 	charLeft, charRight := c.db.GetChars()
 	return doQuoteTableName(table, c.db.GetPrefix(), charLeft, charRight)

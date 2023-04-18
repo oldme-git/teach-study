@@ -9,7 +9,6 @@ package gdb
 // callWhereBuilder creates and returns a new Model, and sets its WhereBuilder if current Model is safe.
 // It sets the WhereBuilder and returns current Model directly if it is not safe.
 func (m *Model) callWhereBuilder(builder *WhereBuilder) *Model {
-	// 获取model，如果是链式安全的，则会克隆一个全新的
 	model := m.getModel()
 	model.whereBuilder = builder
 	return model
