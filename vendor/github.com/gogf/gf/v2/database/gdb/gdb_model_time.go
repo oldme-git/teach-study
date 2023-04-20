@@ -116,6 +116,7 @@ func (m *Model) getSoftFieldName(schema string, table string, keys []string) (fi
 // "user LEFT JOIN user_detail ON(user_detail.uid=user.uid)"
 // "user u LEFT JOIN user_detail ud ON(ud.uid=u.uid) LEFT JOIN user_stats us ON(us.uid=u.uid)".
 func (m *Model) getConditionForSoftDeleting() string {
+	// 忽略软删除
 	if m.unscoped {
 		return ""
 	}

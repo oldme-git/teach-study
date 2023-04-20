@@ -3,41 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
+	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
+	"github.com/gogf/gf/v2/database/gdb"
 )
 
+var link = "mysql:root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme?loc=Local"
+
 func main() {
-	messages := make(chan int, 10)
+	var ctx = context.Background()
+	var input string
+	fmt.Scan(&input)
+	get(ctx)
+	fmt.Scan(&input)
+	get(ctx)
+}
 
-	// producer
-	for i := 0; i < 10; i++ {
-		messages <- i
+func get(ctx context.Context) {
+	// 这个db包含了driver和core
+	db, err := gdb.New(gdb.ConfigNode{
+		Link:  link,
+		Debug: true,
+	})
+	if err != nil {
+		panic(err)
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
-	// consumer
-	go func(ctx context.Context) {
-		ticker := time.NewTicker(1 * time.Second)
-		for _ = range ticker.C {
-			select {
-			case <-ctx.Done():
-				fmt.Println("child process interrupt...")
-				return
-			default:
-				fmt.Printf("send message: %d\n", <-messages)
-			}
-		}
-	}(ctx)
-
-	defer close(messages)
-	defer cancel()
-
-	select {
-	case <-ctx.Done():
-		time.Sleep(3 * time.Second)
-		fmt.Println("main process exit!")
-	}
-
-	fmt.Println("e")
+	db2 := db.Ctx(ctx).Model("article")
+	db2 = db2.Where("article.id=?", "2")
+	//db2 = db2.Where("author=?", "half")
+	//db2 = db2.LeftJoin("article_grp", "article.grp_id=article_grp.id")
+	data, _ := db2.All()
+	fmt.Println(data)
 }

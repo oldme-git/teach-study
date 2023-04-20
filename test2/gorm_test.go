@@ -22,7 +22,7 @@ func TestNew(t *testing.T) {
 		panic(err)
 	}
 	db2 := db.Ctx(ctx).Model("article")
-	db2 = db2.Where("article.id=?", "2")
+	db2 = db2.Where("id =?", "2")
 	db2 = db2.Where("author=?", "half")
 	//db2 = db2.LeftJoin("article_grp", "article.grp_id=article_grp.id")
 	data, _ := db2.All()

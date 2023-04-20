@@ -525,6 +525,7 @@ func formatWhereHolder(ctx context.Context, db DB, in formatWhereHolderInput) (n
 		} else {
 			omitEmptyCheckValue = in.Args
 		}
+		// OmitEmpty检测，true直接返回
 		if isKeyValueCanBeOmitEmpty(in.OmitEmpty, in.Type, in.Where, omitEmptyCheckValue) {
 			return
 		}

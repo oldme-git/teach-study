@@ -1,16 +1,16 @@
 package test2
 
 import (
-	"bytes"
 	"fmt"
 	"testing"
 )
 
+const (
+	Like = 1 << iota
+	Collect
+	Comment
+)
+
 func TestA(t *testing.T) {
-	buf := bytes.NewBufferString("hello")
-	buf.WriteString(" oldme")
-	fmt.Println(buf.String())
-	b, _ := buf.ReadByte()
-	fmt.Println(b)
-	fmt.Println(buf.String())
+	fmt.Printf("%b", 0b1110&0b0001)
 }

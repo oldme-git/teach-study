@@ -468,12 +468,14 @@ func (m *Model) doGetAll(ctx context.Context, limit1 bool, where ...interface{})
 		// 如果All() 携带了 where 信息，则注入到model中
 		return m.Where(where[0], where[1:]...).All()
 	}
+	// 获取格式化后的sql和args
 	sqlWithHolder, holderArgs := m.getFormattedSqlAndArgs(ctx, queryTypeNormal, limit1)
 	return m.doGetAllBySql(ctx, queryTypeNormal, sqlWithHolder, holderArgs...)
 }
 
 // doGetAllBySql does the select statement on the database.
 func (m *Model) doGetAllBySql(ctx context.Context, queryType queryType, sql string, args ...interface{}) (result Result, err error) {
+	// 先获取缓存中的数据
 	if result, err = m.getSelectResultFromCache(ctx, sql, args...); err != nil || result != nil {
 		return
 	}
@@ -548,7 +550,7 @@ func (m *Model) getHolderAndArgsAsSubModel(ctx context.Context) (holder string, 
 	return
 }
 
-// JOIN 处理
+// 关联查询自动获取字符前缀
 func (m *Model) getAutoPrefix() string {
 	autoPrefix := ""
 	if gstr.Contains(m.tables, " JOIN ") {
@@ -617,6 +619,7 @@ func (m *Model) getFieldsFiltered() string {
 // Note that this function does not change any attribute value of the `m`.
 //
 // The parameter `limit1` specifies whether limits querying only one record if m.limit is not set.
+// 格式化查询条件
 // limit1 是否只查询一条数据
 // isCountStatement 是否是聚合查询
 func (m *Model) formatCondition(ctx context.Context, limit1 bool, isCountStatement bool) (conditionWhere string, conditionExtra string, conditionArgs []interface{}) {
@@ -625,22 +628,25 @@ func (m *Model) formatCondition(ctx context.Context, limit1 bool, isCountStateme
 	if m.groupBy != "" {
 		conditionExtra += " GROUP BY " + m.groupBy
 	}
-	// WHERE
+	// WHERE 获取转换为 sql 语句的where和args
 	conditionWhere, conditionArgs = m.whereBuilder.Build()
 	softDeletingCondition := m.getConditionForSoftDeleting()
 	if m.rawSql != "" && conditionWhere != "" {
+		// 存在原始sql语句的情况下
 		if gstr.ContainsI(m.rawSql, " WHERE ") {
 			conditionWhere = " AND " + conditionWhere
 		} else {
 			conditionWhere = " WHERE " + conditionWhere
 		}
 	} else if !m.unscoped && softDeletingCondition != "" {
+		// 存在软删除的情况下
 		if conditionWhere == "" {
 			conditionWhere = fmt.Sprintf(` WHERE %s`, softDeletingCondition)
 		} else {
 			conditionWhere = fmt.Sprintf(` WHERE (%s) AND %s`, conditionWhere, softDeletingCondition)
 		}
 	} else {
+		// 不存在软删除和原始sql语句的情况下
 		if conditionWhere != "" {
 			conditionWhere = " WHERE " + conditionWhere
 		}
