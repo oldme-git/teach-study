@@ -1,4 +1,4 @@
-module gotest
+module goframe
 
 go 1.19
 
