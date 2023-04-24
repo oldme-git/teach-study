@@ -26,6 +26,6 @@ func TestNew(t *testing.T) {
 	db2 = db2.Where("id =?", "2")
 	db2 = db2.Where("author=?", "half")
 	//db2 = db2.LeftJoin("article_grp", "article.grp_id=article_grp.id")
-	data, _ := db2.All()
+	data, _ := db2.OmitEmpty().All()
 	fmt.Println(data)
 }

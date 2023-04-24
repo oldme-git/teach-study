@@ -1,3 +1,4 @@
+// 使用通道协程完成斐波那契数列
 package test
 
 import (

@@ -1,3 +1,4 @@
+// runtime.Gosched测试
 package test
 
 import (
