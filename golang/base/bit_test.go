@@ -6,22 +6,6 @@ import (
 	"testing"
 )
 
-const (
-	hasThumb = 1 << iota
-	hasStore
-	hasCmt
-	hasShare
-)
-
-func TestA(t *testing.T) {
-	hasRes := hasThumb | hasCmt | hasShare
-	fmt.Printf("%b\n", hasRes)               // 1101
-	fmt.Println(hasRes&hasThumb == hasThumb) // true
-	hasRes = hasRes ^ hasThumb
-	fmt.Printf("%b\n", hasRes)               // 1100
-	fmt.Println(hasRes&hasThumb == hasThumb) // false
-}
-
 func TestBase(t *testing.T) {
 	// 与运算，两个位都为1时，结果才为1
 	fmt.Printf("%b\n", 0b110&0b100) // 100
