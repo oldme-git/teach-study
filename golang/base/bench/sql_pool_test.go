@@ -11,8 +11,8 @@ var db *sql.DB
 
 func BenchmarkInsertPool(b *testing.B) {
 	db, _ = sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
-	db.SetMaxOpenConns(28)                  // 一般设置为CPU核心数+2的两倍
-	db.SetMaxIdleConns(14)                  // 一般设置为SetMaxOpenConns的一半
+	db.SetMaxOpenConns(14)                  // 一般设置为CPU核心数+2乘可用磁盘数量
+	db.SetMaxIdleConns(7)                   // 一般设置为SetMaxOpenConns的一半
 	db.SetConnMaxLifetime(time.Minute * 60) // 小于数据库超时时间
 
 	// 重置计时器
@@ -31,8 +31,8 @@ func BenchmarkInsertPool(b *testing.B) {
 // 与pool对比
 func BenchmarkInsert(b *testing.B) {
 	db, _ = sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
-	db.SetMaxOpenConns(12)
-	db.SetMaxIdleConns(6)
+	db.SetMaxOpenConns(20)
+	db.SetMaxIdleConns(10)
 	db.SetConnMaxLifetime(time.Minute * 60)
 	// 重置计时器
 	b.ResetTimer()

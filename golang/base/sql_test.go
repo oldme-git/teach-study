@@ -93,3 +93,12 @@ func TestPrepare(t *testing.T) {
 		panic(err)
 	}
 }
+
+// 打印database信息
+func TestStats(t *testing.T) {
+	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db.SetMaxOpenConns(30)
+	db.SetMaxIdleConns(15)
+	stats := db.Stats()
+	fmt.Printf("%+v\n", stats)
+}
