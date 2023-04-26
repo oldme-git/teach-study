@@ -10,21 +10,21 @@ import (
 // 打印协程数量
 func TestGoNum(t *testing.T) {
 	fmt.Println(runtime.NumGoroutine())
-	chin := make(chan bool)
+	ch := make(chan bool)
 	go func() {
 		for {
 		}
 	}()
 	go func() {
 		select {
-		case <-chin:
+		case <-ch:
 			return
 		}
 	}()
 	time.Sleep(1 * time.Second)
 	fmt.Println(runtime.NumGoroutine())
 	// 通知协程退出退出
-	chin <- true
+	ch <- true
 	time.Sleep(1 * time.Second)
 	fmt.Println(runtime.NumGoroutine())
 }
