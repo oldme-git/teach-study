@@ -7,13 +7,12 @@
 package gdb
 
 const (
-	// 此处用了位运算，细细品味
 	optionOmitNil             = optionOmitNilWhere | optionOmitNilData
 	optionOmitEmpty           = optionOmitEmptyWhere | optionOmitEmptyData
 	optionOmitNilDataInternal = optionOmitNilData | optionOmitNilDataList // this option is used internally only for ForDao feature.
-	optionOmitEmptyWhere      = 1 << iota                                 // 8 = 1*2^3
+	optionOmitEmptyWhere      = 1 << iota                                 // 8
 	optionOmitEmptyData                                                   // 16
-	optionOmitNilWhere                                                     // 32 2^5
+	optionOmitNilWhere                                                    // 32
 	optionOmitNilData                                                     // 64
 	optionOmitNilDataList                                                 // 128
 )

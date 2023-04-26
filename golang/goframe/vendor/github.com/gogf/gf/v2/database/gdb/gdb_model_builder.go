@@ -17,12 +17,6 @@ type WhereBuilder struct {
 }
 
 // WhereHolder is the holder for where condition preparing.
-// OperatorWhere = 1
-// OperatorAnd   = 2
-// OperatorOr    = 3
-// TypeDefault   = Where("id=?", 1)
-// TypeNoArgs    = Where("id=1")
-// TypeIn        = WhereIn
 type WhereHolder struct {
 	Type     string        // Type of this holder.
 	Operator int           // Operator for this holder.
@@ -31,7 +25,7 @@ type WhereHolder struct {
 	Prefix   string        // Field prefix, eg: "user.", "order.".
 }
 
-// Builder creates and returns a WhereBuilder.
+// Builder creates and returns a WhereBuilder. Please note that the builder is chain-safe.
 func (m *Model) Builder() *WhereBuilder {
 	b := &WhereBuilder{
 		model:       m,
@@ -40,8 +34,7 @@ func (m *Model) Builder() *WhereBuilder {
 	return b
 }
 
-// getBuilder creates and returns a cloned WhereBuilder of current WhereBuilder if `safe` is true,
-// or else it returns the current WhereBuilder.
+// getBuilder creates and returns a cloned WhereBuilder of current WhereBuilder
 func (b *WhereBuilder) getBuilder() *WhereBuilder {
 	return b.Clone()
 }
@@ -55,7 +48,6 @@ func (b *WhereBuilder) Clone() *WhereBuilder {
 }
 
 // Build builds current WhereBuilder and returns the condition string and parameters.
-// 将whereHolder编译成成sql和args 的格式
 func (b *WhereBuilder) Build() (conditionWhere string, conditionArgs []interface{}) {
 	var (
 		ctx                         = b.model.GetCtx()
@@ -64,19 +56,14 @@ func (b *WhereBuilder) Build() (conditionWhere string, conditionArgs []interface
 	)
 	if len(b.whereHolder) > 0 {
 		for _, holder := range b.whereHolder {
-			// 如果设置了whereHolder.Prefix则替代自动获取的，一般用作关联查询
 			if holder.Prefix == "" {
 				holder.Prefix = autoPrefix
 			}
 			switch holder.Operator {
 			case whereHolderOperatorWhere, whereHolderOperatorAnd:
-				// where查询
-
 				newWhere, newArgs := formatWhereHolder(ctx, b.model.db, formatWhereHolderInput{
 					WhereHolder: holder,
-					// 字段过滤，判断当前option是否具备optionOmitNilWhere的能力
 					OmitNil:     b.model.option&optionOmitNilWhere > 0,
-					// 字段过滤，判断当前option是否具备optionOmitEmptyWhere的能力
 					OmitEmpty:   b.model.option&optionOmitEmptyWhere > 0,
 					Schema:      b.model.schema,
 					Table:       tableForMappingAndFiltering,
@@ -85,7 +72,6 @@ func (b *WhereBuilder) Build() (conditionWhere string, conditionArgs []interface
 					if len(conditionWhere) == 0 {
 						conditionWhere = newWhere
 					} else if conditionWhere[0] == '(' {
-						// 什么样的情况下会走此条件
 						conditionWhere = fmt.Sprintf(`%s AND (%s)`, conditionWhere, newWhere)
 					} else {
 						conditionWhere = fmt.Sprintf(`(%s) AND (%s)`, conditionWhere, newWhere)

@@ -360,9 +360,7 @@ const (
 	defaultModelSafe                      = false
 	defaultCharset                        = `utf8`
 	defaultProtocol                       = `tcp`
-	// 普通查询
 	queryTypeNormal           queryType   = 0
-	// 聚合查询
 	queryTypeCount            queryType   = 1
 	queryTypeValue            queryType   = 2
 	unionTypeNormal                       = 0
