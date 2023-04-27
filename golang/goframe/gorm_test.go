@@ -10,10 +10,9 @@ import (
 )
 
 var ctx = context.Background()
-var link = "mysql:root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme?loc=Local"
+var link = "mysql:root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/service?loc=Local"
 
 func TestNew(t *testing.T) {
-	fmt.Println(213)
 	// 这个db包含了driver和core
 	db, err := gdb.New(gdb.ConfigNode{
 		Link:  link,

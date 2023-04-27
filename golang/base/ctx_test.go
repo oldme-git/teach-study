@@ -13,7 +13,7 @@ import (
 // 使用ctx控制超时时间
 func TestPingCtx(t *testing.T) {
 	start := time.Now()
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	if err := db.PingContext(ctx); err != nil {
 		t.Log("连接失败")
@@ -27,21 +27,31 @@ func TestCtx(m *testing.T) {
 	fmt.Printf("开始了，有%d个协程\n", runtime.NumGoroutine())
 	// 父context(利用根context得到)
 	ctx, cancel := context.WithCancel(context.Background())
+	ctx = context.WithValue(ctx, "key", "value")
 
 	var e func(ctx context.Context, i int)
 
 	e = func(ctx context.Context, i int) {
 		if i < 3 {
 			c, _ := context.WithCancel(ctx)
+			if i == 1 {
+				// 第1层后改变键值
+				c = context.WithValue(c, "key", "value2")
+			}
 			go e(c, i+1)
 		}
 		for {
 			select {
 			case <-ctx.Done():
-				fmt.Printf("收到关闭信号，第%d层退出\n", i)
+				var s string
+				// 获取取消原因
+				if err := ctx.Err(); err != nil {
+					s = err.Error()
+				}
+				fmt.Printf("收到关闭信号，第%d层退出，退出原因：%s\n", i, s)
 				return
 			default:
-				fmt.Printf("第%d层协程监听中\n", i)
+				fmt.Printf("第%d层协程监听中，key值：%s\n", i, ctx.Value("key"))
 				time.Sleep(1 * time.Second)
 			}
 		}

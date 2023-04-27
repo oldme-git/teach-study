@@ -22,7 +22,7 @@ func TestFunc(t *testing.T) {
 func TestTypeDb(t *testing.T) {
 	ctx := context.Background()
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 	// 测试db是否能通
 	err := db.Ping()
 	if err != nil {
@@ -42,7 +42,7 @@ func TestQuery(t *testing.T) {
 	}
 
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 
 	// 查询单条数据
 	var row saying
@@ -71,7 +71,7 @@ func TestQuery(t *testing.T) {
 // 测试写入语句
 func TestWrite(t *testing.T) {
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 	res, _ := db.Exec("insert into saying (saying) values (?)", "我是gopher")
 	t.Log(res.LastInsertId()) // 最后插入数据的id
 	t.Log(res.RowsAffected()) // 成功行数
@@ -79,7 +79,7 @@ func TestWrite(t *testing.T) {
 
 // SQL准备语句
 func TestPrepare(t *testing.T) {
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 	// 准备sql语句
 	stmt, err := db.Prepare("update saying set saying = ? where id = ?")
 	if err != nil {
@@ -96,7 +96,7 @@ func TestPrepare(t *testing.T) {
 
 // 打印database信息
 func TestStats(t *testing.T) {
-	db, _ := sql.Open("mysql", "root:JCPHqknyy8ATR5ME@tcp(192.168.10.47:3306)/oldme")
+	db, _ := sql.Open("mysql", link)
 	db.SetMaxOpenConns(30)
 	db.SetMaxIdleConns(15)
 	stats := db.Stats()
