@@ -197,6 +197,7 @@ func (m *Model) getLink(master bool) Link {
 		return &txLink{m.tx.GetSqlTX()}
 	}
 	linkType := m.linkType
+	// link类型，是主库还是从库
 	if linkType == 0 {
 		if master {
 			linkType = linkTypeMaster

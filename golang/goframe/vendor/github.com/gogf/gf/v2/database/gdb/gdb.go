@@ -638,6 +638,7 @@ func getConfigNodeByWeight(cg ConfigGroup) *ConfigNode {
 // getSqlDb retrieves and returns an underlying database connection object.
 // The parameter `master` specifies whether retrieves master node connection if
 // master-slave nodes are configured.
+// 获取sql.db
 func (c *Core) getSqlDb(master bool, schema ...string) (sqlDb *sql.DB, err error) {
 	var (
 		node *ConfigNode
@@ -666,12 +667,14 @@ func (c *Core) getSqlDb(master bool, schema ...string) (sqlDb *sql.DB, err error
 		node.Name = nodeSchema
 	}
 	// Update the configuration object in internal data.
+	// 更新configNode
 	internalData := c.GetInternalCtxDataFromCtx(ctx)
 	if internalData != nil {
 		internalData.ConfigNode = node
 	}
 	// Cache the underlying connection pool object by node.
 	instanceNameByNode := fmt.Sprintf(`%+v`, node)
+	// 读取sql的值，如果不存在，则使用第二个参数func创建一个默认值返回过来
 	instanceValue := c.links.GetOrSetFuncLock(instanceNameByNode, func() interface{} {
 		if sqlDb, err = c.db.Open(node); err != nil {
 			return nil
