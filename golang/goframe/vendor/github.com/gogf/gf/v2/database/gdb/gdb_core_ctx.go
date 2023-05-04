@@ -37,6 +37,7 @@ const (
 	ignoreResultKeyInCtx gctx.StrKey = "IgnoreResult"
 )
 
+// InjectInternalCtxData 在上下文中注入internalCtxData
 func (c *Core) InjectInternalCtxData(ctx context.Context) context.Context {
 	// If the internal data is already injected, it does nothing.
 	if ctx.Value(internalCtxDataKeyInCtx) != nil {

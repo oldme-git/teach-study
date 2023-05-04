@@ -23,6 +23,7 @@ func TestPingCtx(t *testing.T) {
 	t.Log(elapsed.Seconds())
 }
 
+// 使用ctx关闭多层goroutine
 func TestCtx(m *testing.T) {
 	fmt.Printf("开始了，有%d个协程\n", runtime.NumGoroutine())
 	// 父context(利用根context得到)
@@ -69,30 +70,13 @@ func TestCtx(m *testing.T) {
 	fmt.Printf("最终结束，有%d个协程\n", runtime.NumGoroutine())
 }
 
-// 父context的协程
-func watch1(ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done(): //取出值即说明是结束信号
-			fmt.Println("收到信号，父context的协程退出,time=", time.Now().Unix())
-			return
-		default:
-			fmt.Println("父context的协程监控中,time=", time.Now().Unix())
-			time.Sleep(1 * time.Second)
-		}
-	}
-}
-
-// 子context的协程
-func watch2(ctx context.Context) {
-	for {
-		select {
-		case <-ctx.Done(): //取出值即说明是结束信号
-			fmt.Println("收到信号，子context的协程退出,time=", time.Now().Unix())
-			return
-		default:
-			fmt.Println("子context的协程监控中,time=", time.Now().Unix())
-			time.Sleep(1 * time.Second)
-		}
+// 向上找到最近的上下文值
+func TestValue(t *testing.T) {
+	ctx := context.Background()
+	ctx1 := context.WithValue(ctx, "key", "ctx1")
+	ctx2 := context.WithValue(ctx1, "key", "ctx2")
+	value := ctx2.Value("key")
+	if value != nil {
+		fmt.Println(value)
 	}
 }

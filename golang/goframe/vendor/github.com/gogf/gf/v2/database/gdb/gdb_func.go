@@ -80,6 +80,7 @@ func WithDB(ctx context.Context, db DB) context.Context {
 }
 
 // DBFromCtx retrieves and returns DB object from context.
+// 从上下文中获取db
 func DBFromCtx(ctx context.Context) DB {
 	if ctx == nil {
 		return nil

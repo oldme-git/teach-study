@@ -139,7 +139,6 @@ func (m *StrAnyMap) Sets(data map[string]interface{}) {
 
 // Search searches the map with given `key`.
 // Second return parameter `found` is true if key was found, otherwise false.
-// 通过key值找
 func (m *StrAnyMap) Search(key string) (value interface{}, found bool) {
 	m.mu.RLock()
 	if m.data != nil {
