@@ -192,6 +192,7 @@ func ListItemValuesUnique(list interface{}, key string, subKey ...interface{}) [
 }
 
 // GetInsertOperationByOption returns proper insert option with given parameter `option`.
+// insert语句的类型
 func GetInsertOperationByOption(option int) string {
 	var operator string
 	switch option {
