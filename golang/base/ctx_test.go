@@ -70,13 +70,74 @@ func TestCtx(m *testing.T) {
 	fmt.Printf("最终结束，有%d个协程\n", runtime.NumGoroutine())
 }
 
-// 向上找到最近的上下文值
-func TestValue(t *testing.T) {
+func TestCtxWithCancel(t *testing.T) {
 	ctx := context.Background()
-	ctx1 := context.WithValue(ctx, "key", "ctx1")
-	ctx2 := context.WithValue(ctx1, "key", "ctx2")
+	ctx, cancel := context.WithCancel(ctx)
+	go func() {
+		for {
+			select {
+			// 还记得前文提到的Done的方法吗
+			// 当 ctx 取消时，ctx.Done()对应的通道就会关闭，case也就会被执行
+			case <-ctx.Done():
+				// ctx.Err() 会获取到关闭原因哦
+				fmt.Println("协程关闭", ctx.Err())
+				return
+			default:
+				fmt.Println("继续运行")
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+	}()
+
+	// 等待一秒后关闭
+	time.Sleep(1 * time.Second)
+	cancel()
+	// 等待一秒，让子协程有时间打印出协程关闭的原因
+	time.Sleep(1 * time.Second)
+}
+
+// 向上找到最近的上下文值
+func TestCtxWithValue(t *testing.T) {
+	ctx := context.Background()
+	ctx1 := context.WithValue(ctx, "key", "ok")
+	ctx2, _ := context.WithCancel(ctx1)
+	// Value 会一直向上追溯到根节点，获取当前上下文携带的值，
 	value := ctx2.Value("key")
 	if value != nil {
 		fmt.Println(value)
 	}
+}
+
+// WithDeadline
+func TestCtxWithDeadline(t *testing.T) {
+	ctx := context.Background()
+	// 调用cancel可以手动关闭，否则等待2秒后自动关闭
+	ctx, cancel := context.WithDeadline(ctx, time.Now().Add(2*time.Second))
+	defer cancel()
+	go func() {
+		select {
+		case <-ctx.Done():
+			// 手动关闭 context canceled
+			// 自动关闭 context deadline exceeded
+			fmt.Println("协程关闭", ctx.Err())
+			return
+		}
+	}()
+
+	time.Sleep(3 * time.Second)
+}
+
+func TestCtxWithTimeout(t *testing.T) {
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	go func() {
+		select {
+		case <-ctx.Done():
+			fmt.Println("协程关闭", ctx.Err())
+			return
+		}
+	}()
+
+	time.Sleep(3 * time.Second)
 }
