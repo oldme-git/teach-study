@@ -2,7 +2,6 @@ package test
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"strconv"
 	"sync"
@@ -38,28 +37,27 @@ func TestChanSendEqReceive(t *testing.T) {
 	wg.Wait()
 }
 
-// 多个发送者，一个接收者，
+// 多个发送者，一个接收者
 func TestManySendAndOneReceive(t *testing.T) {
 	var (
-		maxNum  = 3
-		sendNum = 5
+		sendNum = 3
 		wg      = sync.WaitGroup{}
-		numCh   = make(chan int, 10)
+		numCh   = make(chan int)
 		stopCh  = make(chan struct{})
+		// 10毫秒后通知发送端停止发送数据
+		after = time.After(10 * time.Millisecond)
 	)
-
 	wg.Add(1)
 
 	// send
 	for i := 0; i < sendNum; i++ {
 		go func() {
 			for {
-				value := rand.Intn(maxNum)
 				select {
 				case <-stopCh:
 					fmt.Println("收到退出信号")
 					return
-				case numCh <- value:
+				case numCh <- 1:
 					//fmt.Println("发送成功", value)
 				}
 			}
@@ -68,12 +66,13 @@ func TestManySendAndOneReceive(t *testing.T) {
 
 	// receive
 	go func() {
-		defer wg.Done()
-		for value := range numCh {
-			// 如果随机到0，则通知退出
-			fmt.Println("接收成功", value)
-			if value == 0 {
+		for {
+			select {
+			case v := <-numCh:
+				fmt.Println("接收到数据", v)
+			case <-after:
 				close(stopCh)
+				wg.Done()
 				return
 			}
 		}
@@ -84,18 +83,17 @@ func TestManySendAndOneReceive(t *testing.T) {
 
 // 多个发送者，多个接收者
 func TestManySendAndManyReceive(t *testing.T) {
-	const MaxRandomNumber = 100000
-	const NumReceivers = 10
-	const NumSenders = 1000
-
-	wgReceivers := sync.WaitGroup{}
-	wgReceivers.Add(NumReceivers)
-
-	dataCh := make(chan int, 100)
-	stopCh := make(chan struct{})
-	toStop := make(chan string, 1)
-
-	var stoppedBy string
+	var (
+		maxRandomNumber = 5000
+		receiver        = 10
+		sender          = 10
+		wg              = sync.WaitGroup{}
+		numCh           = make(chan int)
+		stopCh          = make(chan struct{})
+		toStop          = make(chan string, 1)
+		stoppedBy       string
+	)
+	wg.Add(receiver)
 
 	// moderator
 	go func() {
@@ -104,10 +102,10 @@ func TestManySendAndManyReceive(t *testing.T) {
 	}()
 
 	// senders
-	for i := 0; i < NumSenders; i++ {
+	for i := 0; i < sender; i++ {
 		go func(id string) {
 			for {
-				value := rand.Intn(MaxRandomNumber)
+				value := rand.Intn(maxRandomNumber)
 				if value == 0 {
 					select {
 					case toStop <- "sender#" + id:
@@ -126,16 +124,16 @@ func TestManySendAndManyReceive(t *testing.T) {
 				select {
 				case <-stopCh:
 					return
-				case dataCh <- value:
+				case numCh <- value:
 				}
 			}
 		}(strconv.Itoa(i))
 	}
 
 	// receivers
-	for i := 0; i < NumReceivers; i++ {
+	for i := 0; i < receiver; i++ {
 		go func(id string) {
-			defer wgReceivers.Done()
+			defer wg.Done()
 			for {
 				// 提前关闭goroutine
 				select {
@@ -147,8 +145,8 @@ func TestManySendAndManyReceive(t *testing.T) {
 				select {
 				case <-stopCh:
 					return
-				case value := <-dataCh:
-					if value == MaxRandomNumber-1 {
+				case value := <-numCh:
+					if value == maxRandomNumber-1 {
 						select {
 						case toStop <- "receiver#" + id:
 						default:
@@ -156,14 +154,14 @@ func TestManySendAndManyReceive(t *testing.T) {
 						return
 					}
 
-					log.Println(value)
+					t.Log(value)
 				}
 			}
 		}(strconv.Itoa(i))
 	}
 
-	wgReceivers.Wait()
-	log.Println("stopped by", stoppedBy)
+	wg.Wait()
+	t.Log("stopped by", stoppedBy)
 }
 
 // channel多重赋值，可以用来判断channel是否关闭
@@ -202,4 +200,81 @@ func TestChanForRange(t *testing.T) {
 	}()
 
 	time.Sleep(time.Second)
+}
+
+// 会引发channel panic的情况一:发送数据到已经关闭的channel
+// panic: send on closed channel
+func TestChannelPanic1(t *testing.T) {
+	var ch = make(chan int)
+	close(ch)
+	time.Sleep(10 * time.Millisecond)
+	go func() {
+		ch <- 1
+	}()
+	t.Log(<-ch)
+}
+
+// 会引发channel panic的情况一的另外一种:发送数据时关闭channel
+// panic: send on closed channel
+func TestChannelPanic11(t *testing.T) {
+	var ch = make(chan int)
+	go func() {
+		go func() {
+			// 没有接收数据的地方,此处会一直阻塞
+			ch <- 1
+		}()
+	}()
+
+	time.Sleep(20 * time.Millisecond)
+	close(ch)
+}
+
+// 会引发channel panic的情况二:重复关闭channel
+// panic: close of closed channel
+func TestChannelPanic2(t *testing.T) {
+	var ch = make(chan int)
+	close(ch)
+	close(ch)
+}
+
+// 会引发channel panic的情况三:未初始化关闭
+// panic: close of nil channel
+func TestChannelPanic3(t *testing.T) {
+	var ch chan int
+	close(ch)
+}
+
+func TestChan(t *testing.T) {
+	var (
+		ch = make(chan int)
+		wg = sync.WaitGroup{}
+		// 10毫秒后通知发送端停止发送数据
+		after = time.After(10 * time.Millisecond)
+	)
+	wg.Add(2)
+
+	// send
+	go func() {
+		for {
+			select {
+			case <-after:
+				close(ch)
+				wg.Done()
+				return
+			default:
+				ch <- 1
+			}
+		}
+	}()
+
+	// receive
+	go func() {
+		defer wg.Done()
+		for v := range ch {
+			t.Log(v)
+		}
+		return
+	}()
+
+	wg.Wait()
 }
