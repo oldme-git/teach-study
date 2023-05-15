@@ -1,8 +1,10 @@
 package goframe
 
 import (
+	"context"
 	_ "github.com/gogf/gf/contrib/nosql/redis/v2"
 	"github.com/gogf/gf/v2/frame/g"
+
 	"testing"
 )
 
@@ -17,5 +19,5 @@ func TestRedisSet(t *testing.T) {
 		id:    1,
 		title: "title",
 	}
-	redis.Set(ctx, "key", rt)
+	redis.Set(context.Background(), "key", rt)
 }

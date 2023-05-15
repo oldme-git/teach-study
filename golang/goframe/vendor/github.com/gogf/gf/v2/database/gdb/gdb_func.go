@@ -855,6 +855,7 @@ func FormatSqlWithArgs(sql string, args []interface{}) string {
 		func(s string) string {
 			index++
 			if len(args) > index {
+				fmt.Println(args[index])
 				if args[index] == nil {
 					return "null"
 				}
