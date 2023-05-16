@@ -37,7 +37,7 @@ const (
 	ignoreResultKeyInCtx gctx.StrKey = "IgnoreResult"
 )
 
-// InjectInternalCtxData 在上下文中注入internalCtxData
+// InjectInternalCtxData 获取一个上下文,内容是当前db对象和configNode
 func (c *Core) InjectInternalCtxData(ctx context.Context) context.Context {
 	// If the internal data is already injected, it does nothing.
 	if ctx.Value(internalCtxDataKeyInCtx) != nil {

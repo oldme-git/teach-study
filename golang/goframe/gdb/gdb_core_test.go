@@ -1,13 +1,11 @@
 package gdb
 
-import "fmt"
+import (
+	"fmt"
+)
 
-// 统一不同数据库字段，统一使用golang的变量的类型
+// 不同数据库数据类型，统一使用golang的变量的类型
 func ExampleCheckLocalTypeForField() {
-	var (
-		db   = getDb()
-		core = db.GetCore()
-	)
 	field, err := core.CheckLocalTypeForField(ctx, "varbinary", "")
 	if err != nil {
 		return
@@ -15,4 +13,20 @@ func ExampleCheckLocalTypeForField() {
 	fmt.Println(field)
 	// Output:
 	// []byte
+}
+
+func ExampleConvertValueForLocal() {
+	var (
+		fType  = "float(5,2)"
+		fValue = "123.1"
+	)
+
+	local, err := core.ConvertValueForLocal(ctx, fType, fValue)
+	if err != nil {
+		return
+	}
+	fmt.Printf("%T, %v", local, local)
+
+	// Output:
+	// float64, 123.1
 }

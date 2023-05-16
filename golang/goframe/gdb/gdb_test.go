@@ -10,6 +10,8 @@ import (
 var (
 	ctx  = context.Background()
 	link = "mysql:root:123456@tcp(192.168.10.47:3306)/oldme?loc=Local"
+	db   = getDb()
+	core = db.GetCore().GetDB().GetCore()
 )
 
 func getDb() gdb.DB {
@@ -26,10 +28,6 @@ func getDb() gdb.DB {
 }
 
 func TestCheckLocalTypeForField(t *testing.T) {
-	var (
-		db   = getDb()
-		core = db.GetCore()
-	)
 	field, err := core.CheckLocalTypeForField(ctx, "varbinary", "")
 	if err != nil {
 		return

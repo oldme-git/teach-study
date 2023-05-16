@@ -67,14 +67,17 @@ var (
 )
 
 // WithDB injects given db object into context and returns a new context.
+// 从db中中获取ctx，如果db中ctx不存在，则把db注入到ctx中再返回
 func WithDB(ctx context.Context, db DB) context.Context {
 	if db == nil {
 		return ctx
 	}
+	// 先获取当前db的上下文，GetCtx是由Core实现的
 	dbCtx := db.GetCtx()
 	if ctxDb := DBFromCtx(dbCtx); ctxDb != nil {
 		return dbCtx
 	}
+	// 上下文不存在则重新创建
 	ctx = context.WithValue(ctx, ctxKeyForDB, db)
 	return ctx
 }

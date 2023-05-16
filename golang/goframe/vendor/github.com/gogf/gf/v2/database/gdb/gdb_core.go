@@ -60,6 +60,7 @@ func (c *Core) Ctx(ctx context.Context) DB {
 
 // GetCtx returns the context for current DB.
 // It returns `context.Background()` is there's no context previously set.
+// 获取当前core的ctx，如果不存在，创建一个新的ctx，内容是db和configNode
 func (c *Core) GetCtx() context.Context {
 	ctx := c.ctx
 	if ctx == nil {
