@@ -27,10 +27,10 @@ func getDb() gdb.DB {
 	return db
 }
 
-func TestCheckLocalTypeForField(t *testing.T) {
-	field, err := core.CheckLocalTypeForField(ctx, "varbinary", "")
+func TestBase(t *testing.T) {
+	data, err := db.Model("saying").All()
 	if err != nil {
-		return
+		panic(err)
 	}
-	t.Log(field)
+	t.Log(data)
 }
