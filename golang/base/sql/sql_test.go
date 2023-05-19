@@ -1,7 +1,8 @@
 // 学习database/sql的使用
-package test
+package sql
 
 import (
+	test "base"
 	"context"
 	"database/sql"
 	"fmt"
@@ -22,7 +23,7 @@ func TestFunc(t *testing.T) {
 func TestTypeDb(t *testing.T) {
 	ctx := context.Background()
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 	// 测试db是否能通
 	err := db.Ping()
 	if err != nil {
@@ -42,7 +43,7 @@ func TestQuery(t *testing.T) {
 	}
 
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 
 	// 查询单条数据
 	var row saying
@@ -71,7 +72,7 @@ func TestQuery(t *testing.T) {
 // 测试写入语句
 func TestWrite(t *testing.T) {
 	// Open 打开一个db
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 	res, _ := db.Exec("insert into saying (saying) values (?)", "我是gopher")
 	t.Log(res.LastInsertId()) // 最后插入数据的id
 	t.Log(res.RowsAffected()) // 成功行数
@@ -79,7 +80,7 @@ func TestWrite(t *testing.T) {
 
 // SQL准备语句
 func TestPrepare(t *testing.T) {
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 	// 准备sql语句
 	stmt, err := db.Prepare("update saying set saying = ? where id = ?")
 	if err != nil {
@@ -96,7 +97,7 @@ func TestPrepare(t *testing.T) {
 
 // 打印database信息
 func TestStats(t *testing.T) {
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 	db.SetMaxOpenConns(30)
 	db.SetMaxIdleConns(15)
 	stats := db.Stats()

@@ -1,5 +1,5 @@
 // runtime包相关测试
-package test
+package runtime
 
 import (
 	"fmt"

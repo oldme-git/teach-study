@@ -1,6 +1,6 @@
 // 一个结构体和接口互相嵌套的代码
 
-package test
+package _struct
 
 import (
 	"fmt"

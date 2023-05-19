@@ -1,7 +1,8 @@
 // 辅助理解go上下文
-package test
+package goroutine
 
 import (
+	"base"
 	"context"
 	"database/sql"
 	"fmt"
@@ -13,7 +14,7 @@ import (
 // 使用ctx控制超时时间
 func TestPingCtx(t *testing.T) {
 	start := time.Now()
-	db, _ := sql.Open("mysql", link)
+	db, _ := sql.Open("mysql", test.Link)
 	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	if err := db.PingContext(ctx); err != nil {
 		t.Log("连接失败")

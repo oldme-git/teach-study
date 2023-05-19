@@ -1,5 +1,5 @@
 // runtime.Gosched测试
-package test
+package runtime
 
 import (
 	"fmt"

@@ -1,5 +1,5 @@
 // 接口实现
-package test
+package _struct
 
 import (
 	"fmt"
