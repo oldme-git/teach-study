@@ -114,30 +114,47 @@ func TestCanSet(t *testing.T) {
 	fmt.Println("floatElem:", reflect.ValueOf(&f).Elem().CanSet())
 }
 
-// Type与Struct
+// valueElem修改值
+func TestValueElem(t *testing.T) {
+	var i int = 1
+	vOf := reflect.ValueOf(&i)
+	if b := vOf.Elem().CanSet(); b {
+		vOf.Elem().SetInt(2)
+	}
+	fmt.Println(i)
+}
+
+// struct test
+type myStr string
+
+type Internal struct {
+	OneFloat float64
+	OneMap   map[string]interface{}
+}
+
+type External struct {
+	OneStr string
+	int
+	MyStr    myStr `are_you_ok:"I'm Ok!"`
+	Internal Internal
+}
+
+var myStruct = External{
+	OneStr: "one str",
+	int:    1,
+	MyStr:  "my str",
+	Internal: Internal{
+		OneFloat: 1.1,
+		OneMap: map[string]interface{}{
+			"key1": 1,
+			"key2": "2",
+		},
+	},
+}
+
+// Type与Struct，主要是StructField结构体
 func TestTypeStruct(t *testing.T) {
-	type myStr string
-
-	type Nest struct {
-		OneFloat float64
-	}
-
-	type My struct {
-		OneStr string
-		Int    int
-		MyStr  myStr `json:"my_str"`
-		Nest   Nest
-	}
-
-	var (
-		my = My{
-			OneStr: "one str",
-			Int:    1,
-			MyStr:  "my str",
-			Nest:   Nest{OneFloat: 1.1},
-		}
-		tOf = reflect.TypeOf(my)
-	)
+	tOf := reflect.TypeOf(myStruct)
 
 	// NumField 获取结构体成员数量
 	// Field 根据索引获取StructField
@@ -159,6 +176,11 @@ func TestTypeStruct(t *testing.T) {
 	// FindByName 通过Name获取StructField，没有找到时b为false
 	if myFindByName, b := tOf.FieldByName("MyStr"); b {
 		fmt.Printf("%+v\n", myFindByName)
+
+		fmt.Println("-----------")
+		// 取tag
+		myTag := myFindByName.Tag.Get("are_you")
+		fmt.Printf("MyStr的tag: %s\n", myTag)
 	}
 
 	fmt.Println("-----------")
@@ -179,12 +201,23 @@ func TestTypeStruct(t *testing.T) {
 	}
 }
 
-// valueElem修改值
-func TestValueElem(t *testing.T) {
-	var i int = 1
-	vOf := reflect.ValueOf(&i)
-	if b := vOf.Elem().CanSet(); b {
-		vOf.Elem().SetInt(2)
-	}
-	fmt.Println(i)
+// Value与Struct
+func TestValueStruct(t *testing.T) {
+	vOf := reflect.ValueOf(myStruct)
+	// Value对于结构体的操作和Type基本一致，只不过返回的数据类型不是StructField，而是结构体字段的Value
+	myStrValue := vOf.FieldByName("MyStr")
+	fmt.Println(myStrValue.Interface())
+}
+
+// 调用函数
+func add(x, y int) int {
+	return x + y
+}
+func TestFunc(t *testing.T) {
+	var (
+		vOf   = reflect.ValueOf(add)
+		param = []reflect.Value{reflect.ValueOf(1), reflect.ValueOf(2)}
+		res   = vOf.Call(param)
+	)
+	fmt.Println(res[0].Int())
 }
