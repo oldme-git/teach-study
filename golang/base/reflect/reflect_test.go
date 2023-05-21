@@ -8,7 +8,7 @@ import (
 )
 
 // value有可以取出type
-func ExampleValueOfType() {
+func ExampleValue_Type() {
 	var i int8
 	fmt.Println(reflect.ValueOf(i).Type() == reflect.TypeOf(i))
 
@@ -17,8 +17,8 @@ func ExampleValueOfType() {
 }
 
 // value有可以取出type elem
-func ExampleValueOfTypeElem() {
-	var i int8
+func ExampleValue_Elem_Type_Elem() {
+	var i []int
 	// elem
 	vOf := reflect.ValueOf(&i)
 	tOf := reflect.TypeOf(&i)
@@ -30,7 +30,7 @@ func ExampleValueOfTypeElem() {
 	// true
 }
 
-func ExampleTypeElem() {
+func ExampleType_Elem() {
 	var (
 		i       int
 		tOf     = reflect.TypeOf(i)
@@ -43,7 +43,7 @@ func ExampleTypeElem() {
 }
 
 // value和type的kind
-func ExampleKindWithValueAndType() {
+func ExampleType_Kind_Value_Kind() {
 	var i int8
 	fmt.Println(reflect.TypeOf(i).Kind() == reflect.ValueOf(i).Kind())
 
@@ -56,29 +56,33 @@ func ExampleKind() {
 	type myInt int
 	var (
 		// 自定义类型
-		myint myInt
+		my myInt
 		// int基础类型
 		i      int
 		tOfi   = reflect.TypeOf(i)
-		tOfMyi = reflect.TypeOf(myint)
+		tOfMyi = reflect.TypeOf(my)
 	)
 
 	fmt.Printf("int name: %v，int kind: %v\n", tOfi.Name(), tOfi.Kind())
-	fmt.Printf("int name: %v，int kind: %v", tOfMyi.Name(), tOfMyi.Kind())
+	fmt.Printf("myInt name: %v，myInt kind: %v", tOfMyi.Name(), tOfMyi.Kind())
 
 	// OutPut:
 	// int name: int，int kind: int
-	// int name: myInt，int kind: int
+	// myInt name: myInt，myInt kind: int
 }
 
 // 从value中恢复值
-func ExampleValueInt() {
-	var i int
-	i = 1
-	fmt.Println(reflect.ValueOf(i).Int())
+func ExampleValue_Int() {
+	var (
+		i int8   = 1
+		s string = "abc"
+	)
+	fmt.Printf("i的值:%d\n", reflect.ValueOf(i).Int())
+	fmt.Printf("s的值:%s\n", reflect.ValueOf(s).Interface().(string))
 
 	// OutPut:
-	// 1
+	// i的值:1
+	// s的值:abc
 }
 
 // 使用Interface获取空接口，然后使用类型断言获取原始值
@@ -96,32 +100,39 @@ func ExampleInterface() {
 
 // canset
 func TestCanSet(t *testing.T) {
+	// false
 	var i int = 1
 	fmt.Println("int:", reflect.ValueOf(i).CanSet())
 
+	// false
 	var s string = "abc"
 	fmt.Println("string:", reflect.ValueOf(s).CanSet())
 
+	// false
 	var b bool = true
 	fmt.Println("bool:", reflect.ValueOf(b).CanSet())
 
+	// false
 	var f float64 = 1.1
 	fmt.Println("float:", reflect.ValueOf(f).CanSet())
 
-	// ptr
+	// false
 	fmt.Println("floatPtr:", reflect.ValueOf(&f).CanSet())
-	// elem
+	// true
 	fmt.Println("floatElem:", reflect.ValueOf(&f).Elem().CanSet())
 }
 
 // valueElem修改值
-func TestValueElem(t *testing.T) {
+func Example_SetInt() {
 	var i int = 1
 	vOf := reflect.ValueOf(&i)
 	if b := vOf.Elem().CanSet(); b {
 		vOf.Elem().SetInt(2)
 	}
 	fmt.Println(i)
+
+	// OutPut:
+	// 2
 }
 
 // struct test
@@ -213,11 +224,16 @@ func TestValueStruct(t *testing.T) {
 func add(x, y int) int {
 	return x + y
 }
-func TestFunc(t *testing.T) {
+func ExampleFunc() {
 	var (
-		vOf   = reflect.ValueOf(add)
+		vOf = reflect.ValueOf(add)
+		// 创建一个Value切片，用作传参
 		param = []reflect.Value{reflect.ValueOf(1), reflect.ValueOf(2)}
 		res   = vOf.Call(param)
 	)
+	// 接收到的值类型是[]Value
 	fmt.Println(res[0].Int())
+
+	// OutPut:
+	// 3
 }
