@@ -141,7 +141,9 @@ type DB interface {
 	// Transaction.
 	// ===========================================================================
 
+	// 启动事务
 	Begin(ctx context.Context) (TX, error)                                           // See Core.Begin.
+	//
 	Transaction(ctx context.Context, f func(ctx context.Context, tx TX) error) error // See Core.Transaction.
 
 	// ===========================================================================
@@ -154,6 +156,7 @@ type DB interface {
 	GetSchema() string                  // See Core.GetSchema.
 	GetPrefix() string                  // See Core.GetPrefix.
 	GetGroup() string                   // See Core.GetGroup.
+	// dayrun - orm空跑，只读不写
 	SetDryRun(enabled bool)             // See Core.SetDryRun.
 	GetDryRun() bool                    // See Core.GetDryRun.
 	SetLogger(logger glog.ILogger)      // See Core.SetLogger.
@@ -169,10 +172,12 @@ type DB interface {
 
 	GetCtx() context.Context                                                                                 // See Core.GetCtx.
 	GetCore() *Core                                                                                          // See Core.GetCore
+	// 获取不同数据库的分割字符，如mysql是"`"
 	GetChars() (charLeft string, charRight string)                                                           // See Core.GetChars.
 	Tables(ctx context.Context, schema ...string) (tables []string, err error)                               // See Core.Tables. The driver must implement this function.
 	TableFields(ctx context.Context, table string, schema ...string) (map[string]*TableField, error)         // See Core.TableFields. The driver must implement this function.
 	ConvertDataForRecord(ctx context.Context, data interface{}) (map[string]interface{}, error)              // See Core.ConvertDataForRecord
+	// 将数据库类型的值转换为 Go 的类型值
 	ConvertValueForLocal(ctx context.Context, fieldType string, fieldValue interface{}) (interface{}, error) // See Core.ConvertValueForLocal
 	CheckLocalTypeForField(ctx context.Context, fieldType string, fieldValue interface{}) (string, error)    // See Core.CheckLocalTypeForField
 }

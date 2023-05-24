@@ -59,3 +59,25 @@ func TestDoCommit(t *testing.T) {
 	}
 	log.Println(out)
 }
+
+func TestFilteredLink(t *testing.T) {
+	// 获取可用的link链接
+	f := core.FilteredLink()
+	// root@tcp(192.168.10.47:3306)/oldme
+	fmt.Println(f)
+}
+
+func TestQuotePrefixTableName(t *testing.T) {
+	s := core.QuotePrefixTableName("saying")
+	fmt.Println(s)
+}
+
+func TestQuoteString(t *testing.T) {
+	s := core.QuoteString("saying")
+	fmt.Println(s)
+}
+
+func TestQuoteWord(t *testing.T) {
+	s := core.QuoteWord("admin")
+	fmt.Println(s)
+}
