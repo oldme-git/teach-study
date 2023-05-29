@@ -1,6 +1,6 @@
 // 解释内存对齐
 
-package test
+package mem_alignment
 
 import (
 	"fmt"
@@ -8,41 +8,7 @@ import (
 	"unsafe"
 )
 
-type MemStruct1 struct {
-	a int8
-	b int16
-	c complex128
-}
-
-type MemStruct2 struct {
-	a int8
-	c int32
-	b int16
-}
-
-func TestMemBase(t *testing.T) {
-	var m1 MemStruct1
-	t.Log(unsafe.Alignof(m1))
-	t.Log(unsafe.Sizeof(m1))
-	t.Log(unsafe.Alignof(float32(1)))
-	t.Log(unsafe.Sizeof(float32(1)))
-
-	var m2 MemStruct2
-	t.Log(unsafe.Alignof(m2))
-	t.Log(unsafe.Sizeof(m2))
-}
-
-func TestMemBase2(t *testing.T) {
-	var b int8
-	t.Log(unsafe.Alignof(b))
-	t.Log(unsafe.Sizeof(b))
-}
-
-func TestMemBase3(t *testing.T) {
-	t.Log(213)
-}
-
-func TestAlignOf(t *testing.T) {
+func TestSizeOfAndAlignOf(t *testing.T) {
 	var (
 		b     bool
 		s     string
@@ -62,7 +28,7 @@ func TestAlignOf(t *testing.T) {
 		c64   complex64
 		c128  complex128
 		in    interface{}
-		a     [3]int8
+		a     [3]string
 		slice []string
 	)
 
@@ -88,7 +54,64 @@ func TestAlignOf(t *testing.T) {
 	fmt.Printf("slice sizeof:%v, alignof: %v\n", unsafe.Sizeof(slice), unsafe.Alignof(slice))
 }
 
-func TestAbc(t *testing.T) {
-	var s string
-	fmt.Println(unsafe.Sizeof(s))
+// 对于数组类型而言，它的大小是元素数量 * 元素类型字节数
+func TestArrayAndSlice(t *testing.T) {
+	var (
+		slice []int8
+		array [3]int8
+	)
+	fmt.Printf("切片：%v\n", unsafe.Sizeof(slice))
+	fmt.Printf("数组：%v\n", unsafe.Sizeof(array))
+}
+
+type MemStruct struct {
+	b   bool   // alignof: 1
+	i8  int8   // alignof: 1
+	i32 int32  // alignof: 4
+	s   string // alignof: 8
+}
+
+func TestStruct(t *testing.T) {
+	fmt.Printf("MemStruct的对齐系数：{%v}, 等于string的对齐系数：{%v}", unsafe.Alignof(MemStruct{}), unsafe.Alignof(string("1")))
+}
+
+func TestArray(t *testing.T) {
+	var (
+		it  interface{}
+		arr [3]interface{}
+	)
+	fmt.Printf("数组interface{}的对齐系数：{%v}, 等于interface的对齐系数：{%v}", unsafe.Alignof(arr), unsafe.Alignof(it))
+}
+
+func TestAlignOf(t *testing.T) {
+	var (
+		i8    int8
+		s     string
+		array [20]string
+	)
+	fmt.Printf("string sizeof:%v, alignof: %v\n", unsafe.Sizeof(s), unsafe.Alignof(s))        // min(8, 1)
+	fmt.Printf("int8 sizeof:%v, alignof: %v\n", unsafe.Sizeof(i8), unsafe.Alignof(i8))        // min(8, 16)
+	fmt.Printf("array sizeof:%v, alignof: %v\n", unsafe.Sizeof(array), unsafe.Alignof(array)) // min(8, 16)
+}
+
+type S1 struct {
+	s  struct{}
+	i8 int8
+}
+
+type S2 struct {
+	i8 int8
+	s  struct{}
+}
+
+type S3 struct {
+	i16 int16
+	s   struct{}
+}
+
+func TestSpaceStructMem(t *testing.T) {
+	fmt.Printf("S1的占用: %v\n", unsafe.Sizeof(S1{}))
+	fmt.Printf("S2的占用: %v\n", unsafe.Sizeof(S2{}))
+	fmt.Printf("S3的占用: %v\n", unsafe.Sizeof(S3{}))
+	fmt.Printf("S3的占用: %v\n", unsafe.Alignof(struct{}{}))
 }

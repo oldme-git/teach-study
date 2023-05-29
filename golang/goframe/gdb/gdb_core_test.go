@@ -81,3 +81,15 @@ func TestQuoteWord(t *testing.T) {
 	s := core.QuoteWord("admin")
 	fmt.Println(s)
 }
+
+// 获取库的表，当前方法是空的
+func TestTables(t *testing.T) {
+	tables, _ := core.Tables(ctx, "oldme")
+	fmt.Println(tables)
+}
+
+// 获取表的字段，当前方法是空的
+func TestTableFields(t *testing.T) {
+	fields, _ := core.TableFields(ctx, "saying", "oldme")
+	fmt.Println(fields)
+}
