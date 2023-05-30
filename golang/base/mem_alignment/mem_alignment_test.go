@@ -94,24 +94,36 @@ func TestAlignOf(t *testing.T) {
 	fmt.Printf("array sizeof:%v, alignof: %v\n", unsafe.Sizeof(array), unsafe.Alignof(array)) // min(8, 16)
 }
 
+type emptyStruct struct{}
+
 type S1 struct {
-	s  struct{}
-	i8 int8
+	empty emptyStruct
+	i8    int8
 }
 
 type S2 struct {
-	i8 int8
-	s  struct{}
+	i8    int8
+	empty emptyStruct
 }
 
 type S3 struct {
-	i16 int16
-	s   struct{}
+	i16   int16
+	empty emptyStruct
+}
+
+type S4 struct {
+	i16   int16
+	i8    int8
+	empty emptyStruct
 }
 
 func TestSpaceStructMem(t *testing.T) {
 	fmt.Printf("S1的占用: %v\n", unsafe.Sizeof(S1{}))
 	fmt.Printf("S2的占用: %v\n", unsafe.Sizeof(S2{}))
 	fmt.Printf("S3的占用: %v\n", unsafe.Sizeof(S3{}))
-	fmt.Printf("S3的占用: %v\n", unsafe.Alignof(struct{}{}))
+	fmt.Printf("S4的占用: %v\n", unsafe.Sizeof(S4{}))
+	// S3 空结构从第二位开始，往后补充两个字节
+	fmt.Printf("S3的空结构体偏移量: %v\n", unsafe.Offsetof(S3{}.empty))
+	// S4 空结构从第三位开始，往后补充一个字节
+	fmt.Printf("S4的空结构体偏移量: %v\n", unsafe.Offsetof(S4{}.empty))
 }
