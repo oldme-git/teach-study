@@ -4,8 +4,9 @@ go 1.19
 
 require (
 	github.com/gogf/gf/contrib/drivers/mysql/v2 v2.3.3
+	github.com/gogf/gf/contrib/drivers/oracle/v2 v2.4.1
 	github.com/gogf/gf/contrib/nosql/redis/v2 v2.4.0
-	github.com/gogf/gf/v2 v2.4.0
+	github.com/gogf/gf/v2 v2.4.1
 )
 
 require (
@@ -26,6 +27,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/sijms/go-ora/v2 v2.4.20 // indirect
 	go.opentelemetry.io/otel v1.7.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.7.0 // indirect
 	go.opentelemetry.io/otel/trace v1.7.0 // indirect

@@ -67,23 +67,19 @@ var (
 )
 
 // WithDB injects given db object into context and returns a new context.
-// 从db中中获取ctx，如果db中ctx不存在，则把db注入到ctx中再返回
 func WithDB(ctx context.Context, db DB) context.Context {
 	if db == nil {
 		return ctx
 	}
-	// 先获取当前db的上下文，GetCtx是由Core实现的
 	dbCtx := db.GetCtx()
 	if ctxDb := DBFromCtx(dbCtx); ctxDb != nil {
 		return dbCtx
 	}
-	// 上下文不存在则重新创建
 	ctx = context.WithValue(ctx, ctxKeyForDB, db)
 	return ctx
 }
 
 // DBFromCtx retrieves and returns DB object from context.
-// 从上下文中获取db
 func DBFromCtx(ctx context.Context) DB {
 	if ctx == nil {
 		return nil
@@ -195,7 +191,6 @@ func ListItemValuesUnique(list interface{}, key string, subKey ...interface{}) [
 }
 
 // GetInsertOperationByOption returns proper insert option with given parameter `option`.
-// insert语句的类型
 func GetInsertOperationByOption(option int) string {
 	var operator string
 	switch option {
@@ -231,7 +226,7 @@ func DataToMapDeep(value interface{}) map[string]interface{} {
 	return m
 }
 
-// doHandleTableName adds prefix string and quote chars for table name. It handles table string like:
+// doQuoteTableName adds prefix string and quote chars for table name. It handles table string like:
 // "user", "user u", "user,user_detail", "user u, user_detail ut", "user as u, user_detail as ut",
 // "user.user u", "`user`.`user` u".
 //
@@ -858,7 +853,6 @@ func FormatSqlWithArgs(sql string, args []interface{}) string {
 		func(s string) string {
 			index++
 			if len(args) > index {
-				fmt.Println(args[index])
 				if args[index] == nil {
 					return "null"
 				}
