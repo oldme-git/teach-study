@@ -5,10 +5,22 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>DOM优化记载速度测试 - Vue</title>
+  <title>DOM优化加载速度测试 - Vue</title>
+  <style>
+    .list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  </style>
 </head>
 <body>
-<div id="app">{{ message }}</div>
+<div id="app">
+  <div class="list">
+    <div class="seat" v-for="item in list">
+      {{ item.name }}
+    </div>
+  </div>
+</div>
 
 <script src="vue3.2.47.global.prod.min.js"></script>
 <script>
@@ -17,7 +29,14 @@
   createApp({
     data() {
       return {
-        message: 'Hello Vue!'
+        list: []
+      }
+    },
+    mounted() {
+      for (let i = 0; i < 1000; i++) {
+        this.list.push({
+          name: i
+        })
       }
     }
   }).mount('#app')
