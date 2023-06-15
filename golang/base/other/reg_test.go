@@ -1,5 +1,5 @@
 // regexp 包测试
-package test
+package other
 
 import (
 	"fmt"

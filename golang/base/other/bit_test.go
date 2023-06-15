@@ -1,5 +1,5 @@
 // 位运算操作
-package test
+package other
 
 import (
 	"fmt"

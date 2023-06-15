@@ -14,7 +14,7 @@ import (
 // 使用ctx控制超时时间
 func TestPingCtx(t *testing.T) {
 	start := time.Now()
-	db, _ := sql.Open("mysql", test.Link)
+	db, _ := sql.Open("mysql", base.Link)
 	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	if err := db.PingContext(ctx); err != nil {
 		t.Log("连接失败")

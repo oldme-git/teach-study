@@ -3,12 +3,13 @@ package kafka
 import (
 	"github.com/Shopify/sarama"
 	"strings"
+	"time"
 )
 
 const (
 	topic = "kafka one"
 	group = "kafka one_1"
-	host  = "192.168.10.44:9092"
+	host  = "192.168.10.43:9092"
 )
 
 func getAddr() []string {
@@ -18,26 +19,38 @@ func getAddr() []string {
 func getConf() *sarama.Config {
 	conf := sarama.NewConfig()
 	conf.Producer.Return.Successes = true
+	conf.Net.DialTimeout = time.Second
 	return conf
 }
 
-type ExConsumerGroup struct {
+// 创建一个client
+func newClient() (sarama.Client, error) {
+	return sarama.NewClient(getAddr(), getConf())
 }
 
-func producer() {
-	producer, err := sarama.NewSyncProducer(getAddr(), getConf())
+// 创建一个生产者连接
+func newProducer() (sarama.SyncProducer, error) {
+	return sarama.NewSyncProducer(getAddr(), getConf())
+}
+
+// 创建一个消费者连接
+func newConsumer() (sarama.Consumer, error) {
+	return sarama.NewConsumer(getAddr(), getConf())
+}
+
+// 发送一条消息
+func sendMsg(topic string, value string) error {
+	producer, err := newProducer()
 	if err != nil {
-		panic(err)
+		return err
 	}
-	_, _, err = producer.SendMessage(&sarama.ProducerMessage{
+	msg := &sarama.ProducerMessage{
 		Topic: topic,
-		Value: sarama.StringEncoder("发送信息"),
-	})
-	if err != nil {
-		panic(err)
+		Value: sarama.StringEncoder(value),
 	}
-}
-
-func consumer() {
-	//consumer, err := sarama.NewConsumer()
+	_, _, err = producer.SendMessage(msg)
+	if err != nil {
+		return err
+	}
+	return nil
 }
