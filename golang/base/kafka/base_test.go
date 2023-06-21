@@ -15,3 +15,10 @@ func TestClient(t *testing.T) {
 	}
 	t.Log(topics)
 }
+
+func TestSendMsg(t *testing.T) {
+	err := sendMsg("mytopic", "msg")
+	if err != nil {
+		t.Fatal(err)
+	}
+}

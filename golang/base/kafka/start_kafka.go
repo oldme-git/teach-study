@@ -9,7 +9,7 @@ import (
 const (
 	topic = "kafka one"
 	group = "kafka one_1"
-	host  = "192.168.10.43:9092"
+	host  = "192.168.10.43:9092,192.168.10.43:9093,192.168.10.43:9094"
 )
 
 func getAddr() []string {
