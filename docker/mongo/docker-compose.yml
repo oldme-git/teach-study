@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    # 加上权限认证
+    command: [--auth]
+    environment:
+      TZ: CST-8
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: oldme
+      MONGO_USERNAME: newton
+      MONGO_PASSWORD: 123456
+    volumes:
+      - /home/docker/mongo/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - /home/docker/mongo/data:/data/db
