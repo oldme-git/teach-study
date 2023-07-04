@@ -1,0 +1,15 @@
+D:\project\teach-study\C#\study\study-base\bin\Debug\net6.0\study-base.exe
+D:\project\teach-study\C#\study\study-base\bin\Debug\net6.0\study-base.deps.json
+D:\project\teach-study\C#\study\study-base\bin\Debug\net6.0\study-base.runtimeconfig.json
+D:\project\teach-study\C#\study\study-base\bin\Debug\net6.0\study-base.dll
+D:\project\teach-study\C#\study\study-base\bin\Debug\net6.0\study-base.pdb
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.csproj.AssemblyReference.cache
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.GeneratedMSBuildEditorConfig.editorconfig
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.AssemblyInfoInputs.cache
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.AssemblyInfo.cs
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.csproj.CoreCompileInputs.cache
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.dll
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\refint\study-base.dll
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.pdb
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\study-base.genruntimeconfig.cache
+D:\project\teach-study\C#\study\study-base\obj\Debug\net6.0\ref\study-base.dll
