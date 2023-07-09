@@ -19,6 +19,9 @@ func getAddr() []string {
 
 func getConf() *sarama.Config {
 	conf := sarama.NewConfig()
+	// 生产消息后是否需要通知生产者
+	// 同步模式会直接返回
+	// 异步模式会返回到Successes和Errors通道中
 	conf.Producer.Return.Successes = true
 	conf.Net.DialTimeout = time.Second
 	return conf

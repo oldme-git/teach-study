@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"github.com/Shopify/sarama"
 	"log"
 	"testing"
 	"time"
@@ -50,7 +51,7 @@ func TestProducer(t *testing.T) {
 	producer, err := kafka.newProducer()
 
 	if err != nil {
-		return
+		t.Fatal(err)
 	}
 
 	defer producer.Close()
@@ -86,6 +87,45 @@ func TestConsumerGrp(t *testing.T) {
 			}
 		}
 	}()
+
+	for {
+
+	}
+}
+
+// 异步发送消息
+func TestAsyncProducer(t *testing.T) {
+	conf := sarama.NewConfig()
+	conf.Producer.Return.Successes = true
+
+	client, err := sarama.NewClient(getAddr(), conf)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	producer, err := sarama.NewAsyncProducerFromClient(client)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer producer.AsyncClose()
+
+	go func() {
+		for {
+			select {
+			case msg := <-producer.Successes():
+				fmt.Printf("发送成功, topic=%s, partition=%d, offset=%d\n", msg.Topic, msg.Partition, msg.Offset)
+			case err = <-producer.Errors():
+				fmt.Printf("发送消息失败: %s\n", err.Error())
+			}
+		}
+	}()
+
+	msg := &sarama.ProducerMessage{
+		Topic: topic,
+		Value: sarama.StringEncoder("async value"),
+	}
+
+	producer.Input() <- msg
 
 	time.Sleep(3 * time.Second)
 }
