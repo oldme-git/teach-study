@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./goods";
+package goods;
+
+service GoodsRpc {
+  rpc GetGoods (GoodsReq) returns (GoodsRes);
+}
+
+message GoodsReq {
+  uint32 id = 1;
+}
+
+message GoodsRes {
+  string name = 1;
+}
