@@ -1,7 +1,10 @@
+// 使用proto3
 syntax = "proto3";
 
-option go_package = "./goods";
 package goods;
+
+// 指定 Go 代码的包名称和导入路径
+option go_package = "./goods";
 
 service GoodsRpc {
   rpc GetGoods (GoodsReq) returns (GoodsRes);
@@ -13,4 +16,5 @@ message GoodsReq {
 
 message GoodsRes {
   string name = 1;
+  uint64 price = 2;
 }

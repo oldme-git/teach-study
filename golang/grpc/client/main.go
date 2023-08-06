@@ -11,13 +11,13 @@ import (
 )
 
 var (
-	addr = flag.String("addr", "localhost:50051", "the address to connect to")
+	addr = flag.String("addr", "localhost:10001", "the address to connect to")
 )
 
 func main() {
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatalf("连接失败: %v", err)
 	}
 	defer conn.Close()
 	c := pb.NewGoodsRpcClient(conn)
@@ -25,7 +25,8 @@ func main() {
 	defer cancel()
 	r, err := c.GetGoods(ctx, &pb.GoodsReq{Id: 1})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("无法调用: %v", err)
 	}
-	log.Printf("结果: %s", r.GetName())
+	log.Printf("商品名称: %s", r.GetName())
+	log.Printf("商品价格: %d", r.GetPrice())
 }

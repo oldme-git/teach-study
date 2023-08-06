@@ -11,25 +11,30 @@ import (
 	pb "service/protobuf/goods"
 )
 
+// Goods 定义 Goods, 实现接口
 type Goods struct {
 	pb.UnimplementedGoodsRpcServer
 }
 
+// GetGoods 实现获取商品的功能
 func (g *Goods) GetGoods(ctx context.Context, req *pb.GoodsReq) (*pb.GoodsRes, error) {
 	var (
 		name string
 		err  error
 	)
 	if req.Id == 0 {
-		err = errors.New("没有商品")
+		err = errors.New("商品不存在")
 	} else {
 		name = fmt.Sprintf("%d号商品", req.Id)
 	}
-	return &pb.GoodsRes{Name: name}, err
+	return &pb.GoodsRes{
+		Name:  name,
+		Price: 20,
+	}, err
 }
 
 var (
-	port = flag.Int("port", 50051, "The server port")
+	port = flag.Int("port", 10001, "The server port")
 )
 
 func main() {
@@ -40,8 +45,8 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterGoodsRpcServer(s, &Goods{})
-	log.Printf("server listening at %v", lis.Addr())
+	log.Printf("正在监听端口： %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Fatalf("启用服务失败: %v", err)
 	}
 }
