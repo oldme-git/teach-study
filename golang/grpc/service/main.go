@@ -33,13 +33,9 @@ func (g *Goods) GetGoods(ctx context.Context, req *pb.GoodsReq) (*pb.GoodsRes, e
 	}, err
 }
 
-var (
-	port = flag.Int("port", 10001, "The server port")
-)
-
 func main() {
 	flag.Parse()
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	lis, err := net.Listen("tcp", ":10001")
 	if err != nil {
 		log.Fatalf("监听失败: %v", err)
 	}
