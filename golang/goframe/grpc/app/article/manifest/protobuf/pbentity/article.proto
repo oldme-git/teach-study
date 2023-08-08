@@ -1,0 +1,31 @@
+// ==========================================================================
+// Code generated and maintained by GoFrame CLI tool. DO NOT EDIT.
+// ==========================================================================
+
+syntax = "proto3";
+
+package pbentity;
+
+option go_package = "grpc/app/article/api/pbentity";
+
+import "google/protobuf/timestamp.proto";
+
+message Article {
+    uint32                    Id          = 1   ; //                       
+    uint32                    GrpId       = 2   ; // 分组id                
+    string                    Title       = 3   ; // 标题                  
+    string                    Author      = 4   ; // 作者                  
+    string                    Thumb       = 5   ; // 图片地址              
+    string                    Tags        = 6   ; // 标签，依英文逗号隔开  
+    string                    Description = 7   ; // 简介                  
+    string                    Content     = 8   ; // 内容                  
+    int32                     Order       = 9   ; // 排序，越大越靠前      
+    uint32                    Ontop       = 10  ; // 是否置顶              
+    uint32                    Onshow      = 11  ; // 是否显示              
+    uint32                    Hist        = 12  ; // 点击数                
+    uint32                    Post        = 13  ; // 评论数                
+    google.protobuf.Timestamp CreatedAt   = 14  ; // 创建时间              
+    google.protobuf.Timestamp UpdatedAt   = 15  ; // 更新时间              
+    google.protobuf.Timestamp DeletedAt   = 16  ; // 删除时间              
+    google.protobuf.Timestamp LastedAt    = 17  ; // 最后浏览时间          
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package article;
+
+option go_package = "grpc/app/article/api/user/v1";
+
+import "pbentity/article.proto";
+
+service Article {
+  rpc List(ListReq) returns (ListRes);
+}
+
+message ListReq {
+  uint32 Page = 1;
+  uint32 Size = 2;
+}
+
+message ListRes {
+  repeated pbentity.Article Article = 1;
+}

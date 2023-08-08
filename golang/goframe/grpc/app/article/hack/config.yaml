@@ -1,0 +1,15 @@
+
+# CLI tool, only in development environment.
+# https://goframe.org/pages/viewpage.action?pageId=3673173
+gfcli:
+  docker:
+    build: "-a amd64 -s linux -p temp -ew"
+    tagPrefixes:
+      - my.image.pub/my-app
+
+  gen:
+    pbentity:
+      - link: "mysql:root:123456@tcp(192.168.10.47:3306)/oldme"
+        path: "manifest/protobuf/pbentity"
+        tables: "article"
+        package: "grpc/app/article/api/pbentity"
