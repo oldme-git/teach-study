@@ -3,6 +3,8 @@ package client_test
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/contrib/registry/etcd/v2"
+	"github.com/gogf/gf/contrib/rpc/grpcx/v2"
 	"github.com/gogf/gf/v2/os/gctx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -38,10 +40,12 @@ func TestClient(t *testing.T) {
 
 // gf客户端调用
 func TestGfClient(t *testing.T) {
+	grpcx.Resolver.Register(etcd.New("192.168.10.43:2379"))
 	var (
-		ctx       = gctx.New()
-		conn, err = grpc.Dial("localhost:3001", grpc.WithTransportCredentials(insecure.NewCredentials()))
-		client    = pb.NewArticleClient(conn)
+		ctx  = gctx.New()
+		conn = grpcx.Client.MustNewGrpcClientConn("article")
+		//conn, err = grpc.Dial("localhost:3001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		client = pb.NewArticleClient(conn)
 	)
 
 	r, err := client.List(ctx, &pb.ListReq{
