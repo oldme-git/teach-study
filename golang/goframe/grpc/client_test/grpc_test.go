@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	pb "grpc/app/article/api/article/v1"
+	"grpc/consts"
 	"log"
 	"testing"
 	"time"
@@ -40,7 +41,7 @@ func TestClient(t *testing.T) {
 
 // gf客户端调用
 func TestGfClient(t *testing.T) {
-	grpcx.Resolver.Register(etcd.New("192.168.10.43:2379"))
+	grpcx.Resolver.Register(etcd.New(consts.EtcdAddress))
 	var (
 		ctx  = gctx.New()
 		conn = grpcx.Client.MustNewGrpcClientConn("article")

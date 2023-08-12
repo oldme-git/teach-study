@@ -6,9 +6,10 @@ import (
 	"github.com/gogf/gf/v2/os/gctx"
 	"grpc/app/article/internal/cmd"
 	_ "grpc/app/article/internal/packed"
+	"grpc/consts"
 )
 
 func main() {
-	grpcx.Resolver.Register(etcd.New("192.168.10.43:2379"))
+	grpcx.Resolver.Register(etcd.New(consts.EtcdAddress))
 	cmd.Main.Run(gctx.GetInitCtx())
 }
