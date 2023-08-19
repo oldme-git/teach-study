@@ -1,0 +1,64 @@
+version: "3.7"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    container_name: "zookeeper"
+    environment:
+      TZ: CST-8
+    restart: always
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager
+    container_name: "kafka-manager"
+    ports:
+      - "9000:9000"
+    environment:
+      TZ: CST-8
+      ZK_HOSTS: zookeeper:2181
+
+  kafka1:
+    image: wurstmeister/kafka
+    container_name: "kafka1"
+    ports:
+      - "9092:9092"
+    environment:
+      TZ: CST-8
+      KAFKA_NUM_PARTITIONS: 5
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.10.43:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    restart: always
+
+  kafka2:
+    image: wurstmeister/kafka
+    container_name: "kafka2"
+    ports:
+      - "9093:9093"
+    environment:
+      TZ: CST-8
+      KAFKA_NUM_PARTITIONS: 5
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.10.43:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    restart: always
+    
+  kafka3:
+    image: wurstmeister/kafka
+    container_name: "kafka3"
+    ports:
+      - "9094:9094"
+    environment:
+      TZ: CST-8
+      KAFKA_NUM_PARTITIONS: 5
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.10.43:9094
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9094
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    restart: always

@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+    nginx:
+        image: "nginx"
+        container_name: "nginx"
+        restart: "always"
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - "nginx_conf:/etc/nginx"
+
+volumes:
+    nginx_conf:
+        driver: local
+        driver_opts:
+            type: "none"
+            o: "bind"
+            device: "/home/docker/nginx/conf"
