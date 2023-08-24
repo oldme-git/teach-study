@@ -13,7 +13,7 @@ import (
 
 func TestEtcd(t *testing.T) {
 	cli, err := clientv3.New(clientv3.Config{
-		//Endpoints: []string{"192.168.10.43:12379", "192.168.10.43:22379", "192.168.10.43:32379"},
+		//Endpoints: []string{"192.168.10.47:12379", "192.168.10.47:22379", "192.168.10.47:32379"},
 		// TODO 怎么检测到错误
 		Endpoints:   []string{"192.168.10.43:12379, 192.168.10.43:22379, 192.168.10.43:32379"},
 		DialTimeout: 5 * time.Second,
@@ -26,7 +26,7 @@ func TestEtcd(t *testing.T) {
 	ctx := context.Background()
 	ctx, _ = context.WithTimeout(ctx, 2*time.Second)
 
-	_, err = concurrency.NewSession(cli, concurrency.WithContext(ctx))
+	_, err = concurrency.NewSession(cli, concurrency.WithTTL(1))
 	if err != nil {
 		log.Println(err)
 		return
