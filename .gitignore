@@ -1,2 +1,7 @@
 .idea
 /golang/goframe/main.exe~
+/golang/golib_test/main.exe
+/golang/golib_test/main.exe~
+temp
+/golang/goframe-feature-test/*.exe~
+/golang/golib_test/log/*.log
