@@ -20,18 +20,16 @@ type UserScoresDao struct {
 
 // UserScoresColumns defines and stores column names for table user_scores.
 type UserScoresColumns struct {
-	Id     string //
-	Uid    string //
-	Score  string //
-	Course string //
+	Id    string //
+	Uid   string //
+	Score string //
 }
 
 // userScoresColumns holds the columns for table user_scores.
 var userScoresColumns = UserScoresColumns{
-	Id:     "id",
-	Uid:    "uid",
-	Score:  "score",
-	Course: "course",
+	Id:    "id",
+	Uid:   "uid",
+	Score: "score",
 }
 
 // NewUserScoresDao creates and returns a new DAO object for table data access.
