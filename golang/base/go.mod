@@ -1,10 +1,11 @@
 module base
 
-go 1.21.0
+go 1.20
 
 require (
 	github.com/Shopify/sarama v1.38.1
 	github.com/go-sql-driver/mysql v1.7.0
+	golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e
 )
 
 require (
