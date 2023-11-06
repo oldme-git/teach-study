@@ -14,5 +14,4 @@ type UserScores struct {
 	Id     interface{} //
 	Uid    interface{} //
 	Score  interface{} //
-	Course interface{} //
 }
