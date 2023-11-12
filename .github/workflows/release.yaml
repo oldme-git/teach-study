@@ -23,6 +23,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          name: Demo ${{ github.ref }}
+          name: Demo ${{ github.ref_name }}
           draft: false
           prerelease: false
