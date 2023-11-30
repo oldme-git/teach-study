@@ -17,7 +17,7 @@ import (
 
 // 原生客户端调用
 func TestClient(t *testing.T) {
-	conn, err := grpc.Dial("localhost:3001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("localhost:8000", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("连接失败: %v", err)
 	}
