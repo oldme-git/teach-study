@@ -54,6 +54,27 @@ func TestScanner(t *testing.T) {
 	}
 }
 
+func TestScanner2(t *testing.T) {
+	src := []byte(`
+func demo() {
+	fmt.Println("When you are old and gray and full of sleep")
+}
+`)
+
+	var s scanner.Scanner
+	fset := token.NewFileSet()
+	file := fset.AddFile("", fset.Base(), len(src))
+	s.Init(file, src, nil, scanner.ScanComments)
+
+	for {
+		pos, tok, lit := s.Scan()
+		if tok == token.EOF {
+			break
+		}
+		fmt.Printf("%s\t%s\t%q\n", fset.Position(pos), tok, lit)
+	}
+}
+
 // 获取AST
 func TestParse(t *testing.T) {
 	demoGo := getDemoGoPath()
@@ -74,13 +95,31 @@ func TestPrintAST(t *testing.T) {
 	src := `
 package main
 `
-	// Create the AST by parsing src.
-	fset := token.NewFileSet() // positions are relative to fset
+	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "", src, 0)
 	if err != nil {
 		panic(err)
 	}
 
-	// Print the AST.
 	ast.Print(fset, f)
+}
+
+func ExampleGetStructName() {
+	fileSet := token.NewFileSet()
+	node, err := parser.ParseFile(fileSet, getDemoGoPath(), nil, parser.ParseComments)
+	if err != nil {
+		return
+	}
+
+	ast.Inspect(node, func(n ast.Node) bool {
+		if v, ok := n.(*ast.TypeSpec); ok {
+			fmt.Println(v.Name.Name)
+		}
+		return true
+	})
+
+	// Output:
+	// A
+	// B
+	// C
 }
