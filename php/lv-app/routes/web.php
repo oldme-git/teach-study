@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get("/mongo", [\App\Http\Controllers\Controller::class, "mongoTest"]);
