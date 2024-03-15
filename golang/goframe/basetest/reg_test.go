@@ -1,4 +1,4 @@
-package goframe
+package basetest
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
