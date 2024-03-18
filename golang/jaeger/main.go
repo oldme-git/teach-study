@@ -3,14 +3,43 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"time"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/log"
-	"time"
+	"github.com/uber/jaeger-client-go"
+	jaegerCfg "github.com/uber/jaeger-client-go/config"
 )
 
+// initJaeger 将jaeger tracer设置为全局tracer
+func initJaeger(service string) io.Closer {
+	cfg := jaegerCfg.Configuration{
+		// 将采样频率设置为1，每一个span都记录，方便查看测试结果
+		Sampler: &jaegerCfg.SamplerConfig{
+			Type:  jaeger.SamplerTypeConst,
+			Param: 1,
+		},
+		Reporter: &jaegerCfg.ReporterConfig{
+			LogSpans:           true,
+			LocalAgentHostPort: "192.168.10.42:46831",
+		},
+	}
+	closer, err := cfg.InitGlobalTracer(service)
+	if err != nil {
+		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
+	}
+	return closer
+}
+
 func main() {
-	closer := initJaeger("in-process")
+	var (
+		ctx    = context.TODO()
+		closer = initJaeger("Demo")
+	)
 	defer closer.Close()
+
 	// 获取jaeger tracer
 	tracer := opentracing.GlobalTracer()
 	// 创建root span
@@ -18,7 +47,7 @@ func main() {
 	// main执行完结束这个span
 	defer span.Finish()
 	// 将span传递给Foo
-	ctx := opentracing.ContextWithSpan(context.Background(), span)
+	ctx = opentracing.ContextWithSpan(context.Background(), span)
 	Foo(ctx)
 }
 
