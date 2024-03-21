@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -17,7 +18,14 @@ func TestTrace(t *testing.T) {
 	ctx := context.Background()
 
 	// 创建 OTLP HTTP 导出器，连接到 Jaeger
-	exporter, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpointURL("http://192.168.10.41:4318/v1/traces"))
+	// exporter, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpointURL("http://192.168.10.41:4318/v1/traces"))
+	traceClientHTTP := otlptracehttp.NewClient(
+		otlptracehttp.WithEndpoint("192.168.10.42:4318"),
+		otlptracehttp.WithURLPath("/v1/traces"),
+		otlptracehttp.WithInsecure(),
+		otlptracehttp.WithCompression(1),
+	)
+	exporter, err := otlptrace.New(ctx, traceClientHTTP)
 	if err != nil {
 		log.Fatalf("创建导出器失败: %v", err)
 	}
