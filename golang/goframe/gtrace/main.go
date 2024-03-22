@@ -1,20 +1,21 @@
-package gtrace
+package main
 
 import (
 	"context"
+	"time"
+
 	"github.com/gogf/gf/contrib/trace/otlphttp/v2"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/gtrace"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gutil"
-	"testing"
 )
 
-func TestBase(t *testing.T) {
+func main() {
 	const (
-		serviceName = "inprocess"
-		endpoint    = "localhost:6831"
-		path        = "adapt_******_******/api/otlp/traces"
+		serviceName = "otlp-http-client1"
+		endpoint    = "192.168.10.41:4318"
+		path        = "/v1/traces"
 	)
 
 	var ctx = gctx.New()
@@ -34,6 +35,9 @@ func TestBase(t *testing.T) {
 	// Trace 2.
 	user100 := GetUser(ctx, 100)
 	g.Dump(user100)
+
+	// 留一定的时间上报数据
+	time.Sleep(10 * time.Second)
 }
 
 // GetUser retrieves and returns hard coded user data for demonstration.
