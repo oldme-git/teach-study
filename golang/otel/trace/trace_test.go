@@ -18,7 +18,8 @@ func TestTraceHttp(t *testing.T) {
 	ctx := context.Background()
 
 	// 创建 OTLP HTTP 导出器，连接到 Jaeger
-	exporter, err := otlptracehttp.New(ctx, otlptracehttp.WithEndpointURL("http://192.168.10.41:4318/v1/traces"))
+	exporter, err := otlptracehttp.New(ctx,
+		otlptracehttp.WithEndpointURL("http://srv.com:4318/v1/traces"))
 
 	if err != nil {
 		log.Fatalf("创建导出器失败: %v", err)
@@ -68,7 +69,7 @@ func TestTraceGrpc(t *testing.T) {
 
 	// 创建 OTLP gRPC 导出器，连接到 Jaeger
 	exporter, err := otlptracegrpc.New(ctx,
-		otlptracegrpc.WithEndpoint("192.168.10.41:4317"),
+		otlptracegrpc.WithEndpoint("srv.com:4317"),
 		otlptracegrpc.WithInsecure(),
 	)
 
