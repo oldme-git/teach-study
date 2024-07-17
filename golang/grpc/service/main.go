@@ -5,9 +5,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
 	pb "service/protobuf/goods"
 )
 
@@ -18,6 +19,8 @@ type Goods struct {
 
 // GetGoods 实现获取商品的功能
 func (g *Goods) GetGoods(ctx context.Context, req *pb.GoodsReq) (*pb.GoodsRes, error) {
+	// 模拟超时
+	//time.Sleep(2 * time.Second)
 	var (
 		name string
 		err  error
@@ -35,7 +38,7 @@ func (g *Goods) GetGoods(ctx context.Context, req *pb.GoodsReq) (*pb.GoodsRes, e
 
 func main() {
 	flag.Parse()
-	lis, err := net.Listen("tcp", ":10001")
+	lis, err := net.Listen("tcp", ":800")
 	if err != nil {
 		log.Fatalf("监听失败: %v", err)
 	}
