@@ -15,69 +15,36 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/prometheus"
 	api "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/sdk/metric"
 )
 
-const meterName = "go.opentelemetry.io/otel/example/prometheus"
+const meterName = "oldme_prometheus_testing"
+
+var requestHelloCounter api.Int64Counter
 
 func main() {
-	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ctx := context.Background()
 
-	// The exporter embeds a default OpenTelemetry Reader and
-	// implements prometheus.Collector, allowing it to be used as
-	// both a Reader and Collector.
+	// 创建 prometheus 导出器
 	exporter, err := prometheus.New()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// 创建 meter
 	provider := metric.NewMeterProvider(metric.WithReader(exporter))
 	meter := provider.Meter(meterName)
 
-	// Start the prometheus HTTP server and pass the exporter Collector to it
+	// 创建 counter 指标类型
+	requestHelloCounter, err = meter.Int64Counter("requests_hello_total")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	go serveMetrics()
-
-	opt := api.WithAttributes(
-		attribute.Key("A").String("B"),
-		attribute.Key("C").String("D"),
-	)
-
-	// This is the equivalent of prometheus.NewCounterVec
-	counter, err := meter.Float64Counter("foo", api.WithDescription("a simple counter"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	counter.Add(ctx, 5, opt)
-
-	gauge, err := meter.Float64ObservableGauge("bar", api.WithDescription("a fun little gauge"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = meter.RegisterCallback(func(_ context.Context, o api.Observer) error {
-		n := -10. + rng.Float64()*(90.) // [-10, 100)
-		o.ObserveFloat64(gauge, n, opt)
-		return nil
-	}, gauge)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// This is the equivalent of prometheus.NewHistogramVec
-	histogram, err := meter.Float64Histogram(
-		"baz",
-		api.WithDescription("a histogram with custom buckets and rename"),
-		api.WithExplicitBucketBoundaries(64, 128, 256, 512, 1024, 2048, 4096),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	histogram.Record(ctx, 136, opt)
-	histogram.Record(ctx, 64, opt)
-	histogram.Record(ctx, 701, opt)
-	histogram.Record(ctx, 830, opt)
+	go goroutineMock()
 
 	ctx, _ = signal.NotifyContext(ctx, os.Interrupt)
 	<-ctx.Done()
@@ -86,9 +53,28 @@ func main() {
 func serveMetrics() {
 	log.Printf("serving metrics at localhost:2223/metrics")
 	http.Handle("/metrics", promhttp.Handler())
+
+	http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// 记录 counter 指标
+		requestHelloCounter.Add(r.Context(), 1)
+		_, _ = w.Write([]byte("Hello, Otel!"))
+	}))
+
 	err := http.ListenAndServe(":2223", nil) //nolint:gosec // Ignoring G114: Use of net/http serve function that has no support for setting timeouts.
 	if err != nil {
 		fmt.Printf("error serving http: %v", err)
 		return
+	}
+}
+
+// 随机模拟若干个协程
+func goroutineMock() {
+	for {
+		go func() {
+			// 等待若干秒
+			var s = time.Duration(rand.Intn(10))
+			time.Sleep(s * time.Second)
+		}()
+		time.Sleep(1 * time.Millisecond)
 	}
 }
