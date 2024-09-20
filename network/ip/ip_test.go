@@ -58,3 +58,25 @@ func 计算掩码的十位表示法(subnetMask int) int {
 	}
 	return mask
 }
+
+// 掩码计算
+// https://oldme.net/article/55
+func TestA(t *testing.T) {
+	var (
+		subnetMask = 255<<24 | 255<<16 | 240<<8 | 0
+		ip1        = 189<<24 | 10<<16 | 90<<8 | 20
+		ip2        = 189<<24 | 10<<16 | 200<<8 | 20
+		ip3        = 189<<24 | 10<<16 | 202<<8 | 20
+	)
+
+	fmt.Printf("掩码二进制: %b，十位表示: %d\n", subnetMask, 计算掩码的十位表示法(subnetMask))
+
+	var (
+		ip1Network = ip1 & subnetMask
+		ip2Network = ip2 & subnetMask
+		ip3Network = ip3 & subnetMask
+	)
+	fmt.Printf("ip1和计算掩码结果：%b\n", ip1Network)
+	fmt.Printf("ip2和计算掩码结果：%b\n", ip2Network)
+	fmt.Printf("ip3和计算掩码结果：%b\n", ip3Network)
+}
